@@ -46,6 +46,10 @@ afterEach(() => {
   document.body.innerHTML = "";
 });
 
+beforeEach(() => {
+  document.head.innerHTML = "";
+});
+
 describe("isEditorContext", () => {
   it("recognises the editor by its own state container", () => {
     document.body.innerHTML = `<div data-react-values="{}"></div>`;
