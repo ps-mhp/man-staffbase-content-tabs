@@ -24,8 +24,9 @@ describe("TAB_TITLE_ATTRIBUTE", () => {
     // the DOM lowercases it. A capital or a hyphen here and the value lands
     // under a name nothing reads — which is how the title went missing once.
     expect(Object.keys(configurationSchema.properties!)).toEqual([TAB_TITLE_ATTRIBUTE]);
+    // Also lowercase, because the DOM lowercases attribute names on the way in
+    // and the widget would then be reading a name the host never wrote.
     expect(TAB_TITLE_ATTRIBUTE).toBe(TAB_TITLE_ATTRIBUTE.toLowerCase());
-    expect(TAB_TITLE_ATTRIBUTE).not.toContain("-");
   });
 
   it("is the key the dialog's ui hints are filed under", () => {

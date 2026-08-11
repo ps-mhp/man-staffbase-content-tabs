@@ -35,6 +35,43 @@ export const PANEL_CLASS = "content-tabs-panel";
 /** Marks a column that already belongs to a transformed group. */
 export const GROUP_MARKER = "data-content-tabs";
 
+/**
+ * The column geometry the host gave a column, undone.
+ *
+ * A panel is still one of the host's column elements: it carries the class
+ * that makes it a quarter of a row, and whatever the host's stylesheet says
+ * about positioning or grid placement. Inside our container that is all wrong
+ * — the panels no longer sit side by side, they stack, and each one has to
+ * fill the width the whole group was given.
+ *
+ * Written inline and `!important`, not as a stylesheet rule. The host styles
+ * these columns with generated classes whose selectors are at least as
+ * specific as anything we can write without naming them, and they are injected
+ * at runtime, so on a tie the host is simply the later rule and wins. The
+ * container's own width is set inline for the same reason, and that is the one
+ * part of the layout that was observed to work.
+ */
+const PANEL_GEOMETRY: readonly (readonly [string, string])[] = [
+  ["box-sizing", "border-box"],
+  ["width", "100%"],
+  ["max-width", "100%"],
+  ["min-width", "0"],
+  ["flex", "1 1 auto"],
+  ["position", "static"],
+  ["float", "none"],
+  ["grid-column", "auto"],
+  ["grid-row", "auto"],
+  ["margin-left", "0"],
+  ["margin-right", "0"],
+  ["transform", "none"],
+];
+
+const applyPanelGeometry = (column: HTMLElement): void => {
+  PANEL_GEOMETRY.forEach(([property, value]) => {
+    column.style.setProperty(property, value, "important");
+  });
+};
+
 export interface MountedGroup {
   readonly group: TabGroup;
   readonly container: HTMLElement;
@@ -48,14 +85,16 @@ export const isTransformed = (column: HTMLElement): boolean => column.hasAttribu
 
 const applyWidth = (container: HTMLElement, width: GroupWidth): void => {
   if (width.kind === "grid") {
-    container.style.gridColumn = `span ${width.span}`;
+    container.style.setProperty("grid-column", `span ${width.span}`, "important");
     return;
   }
   if (width.kind === "percent") {
     // Both, because the section may lay its columns out with flex or as plain
     // blocks and only one of the two takes effect in either case.
-    container.style.flex = `0 0 ${width.percent}%`;
-    container.style.width = `${width.percent}%`;
+    container.style.setProperty("flex", `0 0 ${width.percent}%`, "important");
+    container.style.setProperty("width", `${width.percent}%`, "important");
+    container.style.setProperty("max-width", `${width.percent}%`, "important");
+    container.style.setProperty("min-width", "0", "important");
   }
 };
 
@@ -85,8 +124,9 @@ export function transformGroup(group: TabGroup): MountedGroup | null {
   group.members.forEach(({ column, widget }) => {
     column.setAttribute(GROUP_MARKER, "");
     column.classList.add(PANEL_CLASS);
+    applyPanelGeometry(column);
     // The block is configuration, not content: it must not show up in the panel.
-    widget.style.display = "none";
+    widget.style.setProperty("display", "none", "important");
     container.appendChild(column);
   });
 
@@ -95,7 +135,8 @@ export function transformGroup(group: TabGroup): MountedGroup | null {
     group.members.forEach(({ column }, position) => {
       const active = position === index;
       column.hidden = !active;
-      column.style.display = active ? "" : "none";
+      if (active) column.style.removeProperty("display");
+      else column.style.setProperty("display", "none", "important");
     });
   };
 

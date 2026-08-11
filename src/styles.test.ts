@@ -11,36 +11,10 @@
  * limitations under the License.
  */
 
-import { CONTENT_TABS_CSS, STYLE_ELEMENT_ID, ensureStyles } from "./styles";
-import { PANEL_CLASS } from "./tabs-transform";
+import { STYLE_ELEMENT_ID, ensureStyles } from "./styles";
 
 afterEach(() => {
   document.head.innerHTML = "";
-});
-
-describe("CONTENT_TABS_CSS", () => {
-  it("outranks the host's own column rules on a panel", () => {
-    // A panel is still one of the host's column elements and still carries its
-    // column classes. Inside our container that geometry is wrong: the panels
-    // stack and each must fill the width. A single class would only tie with
-    // the host's, and the winner would come down to stylesheet order.
-    expect(CONTENT_TABS_CSS).toContain(`.${PANEL_CLASS}.${PANEL_CLASS} {`);
-  });
-
-  it("takes back the width the host gave the column", () => {
-    const rule = CONTENT_TABS_CSS.split(`.${PANEL_CLASS}.${PANEL_CLASS} {`)[1].split("}")[0];
-
-    expect(rule).toContain("width: 100%");
-    expect(rule).toContain("max-width: 100%");
-    expect(rule).toContain("position: static");
-    expect(rule).toContain("grid-column: auto");
-  });
-
-  it("hides an inactive panel by attribute, not only by inline style", () => {
-    // The host re-renders these columns and writes their style attribute from
-    // its own state; a rule keyed on `hidden` survives that.
-    expect(CONTENT_TABS_CSS).toContain(`.${PANEL_CLASS}.${PANEL_CLASS}[hidden] {`);
-  });
 });
 
 describe("ensureStyles", () => {

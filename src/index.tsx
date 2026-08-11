@@ -31,23 +31,29 @@ import icon from "../resources/content-tabs.svg";
 import pkg from "../package.json";
 
 /**
- * The attribute the host writes for the `tabtitle` configuration field.
+ * The one name the tab title goes by.
  *
- * The host stores a configuration value under its schema key verbatim, and the
- * DOM lowercases attribute names — so this must equal the schema key and
- * contain no capitals and no hyphen, or the value is written under a name
- * nothing reads.
+ * Three places have to agree on it, and every one of them is load-bearing:
+ * the key in the configuration schema, because the host saves a value under
+ * its schema key verbatim; the attribute declared to the host, because it
+ * drops an attribute it was never told about; and the name read back here.
+ * They disagreed once — schema `tabTitle`, declared `tab-title` — and every
+ * title fell on the floor between the dialog and the page, with nothing
+ * anywhere to say so.
+ *
+ * It is also the attribute registered for this widget in the Staffbase
+ * installation (see `widgets.json`), which is why the hyphenated spelling is
+ * the one they all moved to: changing it would mean re-registering the widget.
  */
-export const TAB_TITLE_ATTRIBUTE = "tabtitle";
+export const TAB_TITLE_ATTRIBUTE = "tab-title";
 
 /**
  * Names an already-saved title may sit under.
  *
- * Earlier builds declared the attribute as `tab-title` while the dialog wrote
- * `tabtitle`, so pages configured with those builds carry either. Reading all
- * of them costs nothing and keeps existing content working.
+ * A page configured by an earlier build may carry either of the older
+ * spellings. Reading all of them costs nothing and keeps that content working.
  */
-const TITLE_KEYS = [TAB_TITLE_ATTRIBUTE, "tabTitle", "tab-title"] as const;
+const TITLE_KEYS = [TAB_TITLE_ATTRIBUTE, "tabtitle", "tabTitle"] as const;
 
 /** Attributes handled by the widget; mirrored in the configuration schema. */
 const widgetAttributes: string[] = [TAB_TITLE_ATTRIBUTE];
