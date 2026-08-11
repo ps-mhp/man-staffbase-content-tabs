@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-import { clearTabsForTests, registerTab } from "./tab-registry";
+import { clearTabsForTests, registerTab, setTabTitle } from "./tab-registry";
 import { GROUP_CLASS } from "./tabs-transform";
 import { isEditorContext, runContentTabs, startContentTabs } from "./bootstrap";
 
@@ -39,7 +39,17 @@ const addWidget = (column: HTMLElement, title: string | null): HTMLElement => {
  * The registry coalesces registrations into one microtask, so a test that
  * registers a block has to let that microtask run before looking.
  */
-const flush = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0));
+/**
+ * Waits for the observer's deferred pass.
+ *
+ * Two turns, not one: the MutationObserver callback arrives as a microtask and
+ * only schedules its timeout then, so a single turn would have been queued
+ * first and would resolve before the pass had run.
+ */
+const flush = async (): Promise<void> => {
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  await new Promise((resolve) => setTimeout(resolve, 0));
+};
 
 afterEach(() => {
   clearTabsForTests();
@@ -142,6 +152,50 @@ describe("runContentTabs in the frontend", () => {
 
     expect(columns[1].hidden).toBe(false);
     expect(columns[0].hidden).toBe(true);
+    stop();
+  });
+
+  it("leaves the tabs alone when the host changes content inside a column", async () => {
+    const columns = buildSection(2);
+    addWidget(columns[0], "Übersicht");
+    addWidget(columns[1], "Details");
+
+    const stop = runContentTabs();
+    await flush();
+
+    const container = document.querySelector(`.${GROUP_CLASS}`);
+    const bar = document.querySelector('[role="tablist"]');
+    document.querySelectorAll<HTMLElement>('[role="tab"]')[1].click();
+
+    // What a news feed, an inbox or any other host widget does once its own
+    // request comes back: it writes into the column it lives in. That must not
+    // reach the tabs — rebuilding here is what froze live pages, because
+    // moving the host's columns made the host render again, without end.
+    for (let round = 0; round < 5; round += 1) {
+      columns[0].appendChild(document.createElement("p"));
+      columns[1].appendChild(document.createElement("span"));
+      await flush();
+    }
+
+    expect(document.querySelector(`.${GROUP_CLASS}`)).toBe(container);
+    expect(document.querySelector('[role="tablist"]')).toBe(bar);
+    // The reader's chosen tab survived, which a rebuild would have reset.
+    expect(document.querySelectorAll<HTMLElement>('[role="tab"]')[1].getAttribute("aria-selected")).toBe("true");
+    stop();
+  });
+
+  it("does still react when a title changes", async () => {
+    const columns = buildSection(2);
+    const first = addWidget(columns[0], "Übersicht");
+    addWidget(columns[1], "Details");
+
+    const stop = runContentTabs();
+    await flush();
+
+    setTabTitle(first, "Start");
+    await flush();
+
+    expect(document.querySelectorAll<HTMLElement>('[role="tab"]')[0].textContent).toBe("Start");
     stop();
   });
 
