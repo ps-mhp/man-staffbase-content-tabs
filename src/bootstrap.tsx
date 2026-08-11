@@ -19,6 +19,7 @@ import { DocumentWatch, observeDocument, whenPageReady } from "@shared/dom";
 
 import { markEditorGroups } from "./editor-view";
 import { TabGroup, scanAll } from "./section-scan";
+import { ensureStyles } from "./styles";
 import { onTabsChanged, registeredTabs, titleOf } from "./tab-registry";
 import { transformGroup } from "./tabs-transform";
 import { TabsBar } from "./tabs-view";
@@ -118,6 +119,7 @@ const mountGroup = (group: TabGroup): Mount | null => {
  * @returns a function that undoes everything and stops watching.
  */
 export function runContentTabs(): () => void {
+  ensureStyles();
   const editor = isEditorContext();
   let mounts: Mount[] = [];
   let unmark: (() => void) | null = null;

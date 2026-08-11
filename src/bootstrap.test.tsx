@@ -59,6 +59,12 @@ describe("isEditorContext", () => {
 });
 
 describe("runContentTabs in the frontend", () => {
+  it("brings its stylesheet along", () => {
+    runContentTabs()();
+
+    expect(document.getElementById("content-tabs-styles")).not.toBeNull();
+  });
+
   it("turns a group into tabs", () => {
     const columns = buildSection(2);
     addWidget(columns[0], "Übersicht");
