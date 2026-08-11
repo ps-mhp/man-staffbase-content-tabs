@@ -50,7 +50,13 @@ export function TabsBar({
   tabIds,
   onSelect,
 }: TabsBarProps): React.JSX.Element {
+  const isValid =
+    titles.length > 0 &&
+    tabIds.length === titles.length &&
+    panelIds.length === titles.length;
+
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
+    if (!isValid) return;
     const last = titles.length - 1;
     const next: Record<string, number> = {
       ArrowRight: activeIndex === last ? 0 : activeIndex + 1,
@@ -66,7 +72,7 @@ export function TabsBar({
 
   return (
     <div className={`${BAR_CLASS}__list`} role="tablist" onKeyDown={onKeyDown}>
-      {titles.map((title, index) => (
+      {isValid && titles.map((title, index) => (
         <button
           key={tabIds[index]}
           id={tabIds[index]}

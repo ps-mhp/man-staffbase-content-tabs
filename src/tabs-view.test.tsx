@@ -39,6 +39,7 @@ describe("tabLabel", () => {
   it("falls back to a numbered label while a title is missing", () => {
     expect(tabLabel(null, 0)).toBe("Tab 1");
     expect(tabLabel("   ", 2)).toBe("Tab 3");
+    expect(tabLabel("", 1)).toBe("Tab 2");
   });
 });
 
@@ -99,5 +100,44 @@ describe("TabsBar", () => {
 
     await userEvent.keyboard("{Home}");
     expect(onSelect).toHaveBeenLastCalledWith(0);
+  });
+
+  it("renders nothing when titles is empty and ignores keyboard events", async () => {
+    const onSelect = jest.fn();
+    render(
+      <TabsBar titles={[]} activeIndex={0} panelIds={[]} tabIds={[]} onSelect={onSelect} />,
+    );
+
+    expect(screen.queryAllByRole("tab")).toHaveLength(0);
+
+    const tablist = screen.getByRole("tablist");
+    tablist.focus();
+    await userEvent.keyboard("{ArrowRight}{ArrowLeft}{Home}{End}");
+
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("renders nothing when array lengths are mismatched and emits no console errors", async () => {
+    const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+    const onSelect = jest.fn();
+    try {
+      render(
+        <TabsBar
+          titles={["A", "B", "C"]}
+          activeIndex={0}
+          panelIds={["panel-0", "panel-1"]}
+          tabIds={["tab-0", "tab-1", "tab-2"]}
+          onSelect={onSelect}
+        />,
+      );
+
+      expect(screen.queryAllByRole("tab")).toHaveLength(0);
+      expect(errorSpy).not.toHaveBeenCalled();
+      expect(warnSpy).not.toHaveBeenCalled();
+    } finally {
+      errorSpy.mockRestore();
+      warnSpy.mockRestore();
+    }
   });
 });
