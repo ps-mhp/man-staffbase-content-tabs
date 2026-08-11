@@ -12,7 +12,7 @@
  */
 
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { TabsBar, tabLabel } from "./tabs-view";
@@ -102,7 +102,7 @@ describe("TabsBar", () => {
     expect(onSelect).toHaveBeenLastCalledWith(0);
   });
 
-  it("renders nothing when titles is empty and ignores keyboard events", async () => {
+  it("renders nothing when titles is empty and ignores keyboard events", () => {
     const onSelect = jest.fn();
     render(
       <TabsBar titles={[]} activeIndex={0} panelIds={[]} tabIds={[]} onSelect={onSelect} />,
@@ -110,9 +110,10 @@ describe("TabsBar", () => {
 
     expect(screen.queryAllByRole("tab")).toHaveLength(0);
 
-    const tablist = screen.getByRole("tablist");
-    tablist.focus();
-    await userEvent.keyboard("{ArrowRight}{ArrowLeft}{Home}{End}");
+    // fireEvent is used here intentionally: the tablist has no tabIndex, so
+    // jsdom never moves focus to it and userEvent key events land on body.
+    fireEvent.keyDown(screen.getByRole("tablist"), { key: "ArrowRight" });
+    fireEvent.keyDown(screen.getByRole("tablist"), { key: "End" });
 
     expect(onSelect).not.toHaveBeenCalled();
   });

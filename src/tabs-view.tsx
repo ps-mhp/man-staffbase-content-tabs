@@ -50,6 +50,7 @@ export function TabsBar({
   tabIds,
   onSelect,
 }: TabsBarProps): React.JSX.Element {
+  // Guard: no tabs at all (empty titles), or id arrays are mismatched with titles.
   const isValid =
     titles.length > 0 &&
     tabIds.length === titles.length &&
