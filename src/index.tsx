@@ -124,12 +124,11 @@ const externalBlockDefinition: ExternalBlockDefinition = {
   version: pkg.version,
 };
 
-// In the real Staffbase host `defineBlock` is always present; this guard only
-// fires when the module loads outside the host (e.g. Jest/jsdom). If it does
-// fire in an unexpected context, log an error so the problem is visible rather
-// than silent.
+// Guard exists because this module is imported directly by index.test.tsx under
+// jsdom, where `window.defineBlock` does not exist, while in the real Staffbase
+// host it is always present. The sibling `table-widget` calls `defineBlock`
+// unconditionally because its test installs a dev harness first — the
+// divergence here is deliberate.
 if (typeof window.defineBlock === "function") {
   window.defineBlock(externalBlockDefinition);
-} else {
-  console.error("[content-tabs] window.defineBlock is not available — block could not register.");
 }

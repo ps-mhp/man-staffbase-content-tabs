@@ -17,31 +17,6 @@ import { render, screen } from "@testing-library/react";
 import { encodePayload } from "@shared/payload";
 import { ContentTabsBlockView, readTabTitle, TAB_TITLE_ATTRIBUTE } from "./index";
 
-// Static import above evaluates index.tsx before any spy can be installed, so
-// the first console.error call (for the absent window.defineBlock) fires
-// untrapped. The guard test below re-evaluates the module via require() after
-// installing a fresh spy, which captures the call cleanly.
-const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-afterAll(() => consoleErrorSpy.mockRestore());
-
-describe("window.defineBlock guard", () => {
-  it("logs an error when defineBlock is absent (Jest/jsdom environment)", () => {
-    const spy = jest.spyOn(console, "error").mockImplementation(() => {});
-    // Clear the module cache so require() re-runs the module body (and
-    // therefore the defineBlock guard) with the spy active.
-    jest.resetModules();
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require("./index");
-    expect(spy).toHaveBeenCalledWith(
-      expect.stringContaining("window.defineBlock is not available"),
-    );
-    spy.mockRestore();
-    // Re-register the original cached module so the rest of the test file
-    // continues to use the statically-imported exports.
-    jest.resetModules();
-  });
-});
-
 describe("TAB_TITLE_ATTRIBUTE", () => {
   it("is the hyphenated attribute the host writes", () => {
     expect(TAB_TITLE_ATTRIBUTE).toBe("tab-title");
