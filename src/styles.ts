@@ -58,12 +58,11 @@ export const CONTENT_TABS_CSS = `
 }
 
 .content-tabs-tab:hover {
-  border-bottom-color: rgba(0, 0, 0, 0.25);
+  border-bottom: 2px solid var(--man-red);
 }
 
 .content-tabs-tab[aria-selected="true"] {
-  border-bottom-color: var(--man-red);
-  border-bottom-size: var(--man-border-width);
+  border-bottom: 2px solid var(--man-red);
   font-weight: 600;
 }
 
