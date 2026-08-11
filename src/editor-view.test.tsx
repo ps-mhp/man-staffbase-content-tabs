@@ -72,6 +72,7 @@ describe("markEditorGroups", () => {
     expect(classList.contains("content-tabs-group-start")).toBe(true);
     expect(classList.contains("content-tabs-group-end")).toBe(true);
     expect(classList.contains("content-tabs-group-middle")).toBe(false);
+    expect(group.members[0].column.hasAttribute(EDITOR_MARKER)).toBe(true);
   });
 
   it("removes every mark it made", () => {

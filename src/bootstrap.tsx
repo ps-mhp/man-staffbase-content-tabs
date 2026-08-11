@@ -160,9 +160,29 @@ export function runContentTabs(): () => void {
   };
 }
 
-/** Starts the widget once the host has finished wiring up its own elements. */
-export function startContentTabs(): void {
-  whenPageReady(() => {
-    runContentTabs();
+/**
+ * Starts the widget once the host has finished wiring up its own elements.
+ *
+ * @returns a function that stops everything. Calling it before the page-ready
+ *   callback fires prevents the run from ever starting. Calling it after fires
+ *   the teardown returned by `runContentTabs`. Safe to call more than once.
+ */
+export function startContentTabs(): () => void {
+  let stop: (() => void) | null = null;
+  let stopped = false;
+
+  // `whenPageReady` returns a cancel handle; store it so we can abort before
+  // the callback ever runs. Using this cancel handle is cleaner than inventing
+  // our own flag because `whenPageReady` already owns that guard internally.
+  const cancel = whenPageReady(() => {
+    if (stopped) return;
+    stop = runContentTabs();
   });
+
+  return (): void => {
+    if (stopped) return;
+    stopped = true;
+    cancel(); // prevents the callback if it has not fired yet
+    stop?.(); // tears down if the callback already ran
+  };
 }

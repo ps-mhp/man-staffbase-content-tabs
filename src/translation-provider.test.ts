@@ -31,10 +31,12 @@ describe("contentTabsTranslationProvider", () => {
   });
 
   it("escapes markup in the title", () => {
-    const html = provider.toTranslatable('<b>A</b> & "B"')!;
+    const html = provider.toTranslatable('<b>A</b> & "B" \'C\'')!;
 
     expect(html).toContain("&lt;b&gt;");
     expect(html).toContain("&amp;");
+    expect(html).toContain("&quot;");
+    expect(html).toContain("&#39;");
   });
 
   it("has nothing to send for an empty title", () => {

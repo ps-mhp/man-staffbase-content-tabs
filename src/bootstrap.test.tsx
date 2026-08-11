@@ -13,7 +13,7 @@
 
 import { clearTabsForTests, registerTab } from "./tab-registry";
 import { GROUP_CLASS } from "./tabs-transform";
-import { isEditorContext, runContentTabs } from "./bootstrap";
+import { isEditorContext, runContentTabs, startContentTabs } from "./bootstrap";
 
 const buildSection = (columnCount: number): HTMLElement[] => {
   const section = document.createElement("div");
@@ -195,5 +195,49 @@ describe("runContentTabs in the editor", () => {
     expect(columns[0].classList.contains("content-tabs-group-start")).toBe(true);
     expect(columns[1].classList.contains("content-tabs-group-end")).toBe(true);
     stop();
+  });
+});
+
+describe("startContentTabs", () => {
+  beforeEach(() => {
+    // In jsdom requestAnimationFrame is undefined, so whenPageReady falls back to
+    // setTimeout(0). Fake timers let us control exactly when that fires.
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("does not transform the page when stopped before the page-ready callback fires", () => {
+    const columns = buildSection(2);
+    addWidget(columns[0], "A");
+    addWidget(columns[1], "B");
+
+    const stop = startContentTabs();
+    // Cancel before the deferred setTimeout fires.
+    stop();
+    // Now fire all timers — the cancelled guard must suppress the run.
+    jest.runAllTimers();
+
+    expect(document.querySelector(`.${GROUP_CLASS}`)).toBeNull();
+  });
+
+  it("restores the page when stopped after the page-ready callback has fired", () => {
+    const columns = buildSection(2);
+    addWidget(columns[0], "A");
+    addWidget(columns[1], "B");
+    const before = document.body.innerHTML;
+
+    const stop = startContentTabs();
+    // Fire the deferred callback so runContentTabs() executes and transforms the DOM.
+    jest.runAllTimers();
+
+    expect(document.querySelector(`.${GROUP_CLASS}`)).not.toBeNull();
+
+    // The stopper must delegate to runContentTabs's own teardown.
+    stop();
+
+    expect(document.body.innerHTML).toBe(before);
   });
 });

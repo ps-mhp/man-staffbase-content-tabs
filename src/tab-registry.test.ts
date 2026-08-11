@@ -79,6 +79,22 @@ describe("tab registry", () => {
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
+  it("notifies listeners when a tab title changes via setTabTitle", async () => {
+    const listener = jest.fn();
+    const a = el();
+    registerTab(a, "Übersicht");
+    await Promise.resolve();
+    onTabsChanged(listener);
+
+    setTabTitle(a, "Details");
+
+    // The notification is coalesced into a microtask — not yet fired.
+    expect(listener).not.toHaveBeenCalled();
+    await Promise.resolve();
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
   it("stops notifying a listener that unsubscribed", async () => {
     const listener = jest.fn();
     const off = onTabsChanged(listener);
@@ -116,6 +132,7 @@ describe("tab registry", () => {
     const first = jest.fn();
     const second = jest.fn();
     onTabsChanged(first);
+    onTabsChanged(second);
 
     const third = jest.fn();
     first.mockImplementation(() => {
@@ -126,7 +143,7 @@ describe("tab registry", () => {
     await Promise.resolve();
 
     expect(first).toHaveBeenCalledTimes(1);
-    expect(second).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
     expect(third).not.toHaveBeenCalled();
 
     registerTab(el(), "b");
