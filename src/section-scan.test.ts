@@ -17,6 +17,11 @@ import { columnsOf, scanAll, scanSection } from "./section-scan";
  * direct children of the wrapper and carry both the semantic class and a
  * `column-<n>` width class (confirmed against a published page, see the spike
  * report). `spec` marks which columns hold a `<content-tabs>`.
+ *
+ * The `sectionstyle__*` hash classes are deliberate realism — they model the
+ * actual Staffbase DOM where styled-components injects its own class alongside
+ * the stable semantic ones. The dedicated "stable host classes" test below pins
+ * that the implementation does not depend on them.
  */
 const buildSection = (widths: readonly number[], withWidget: readonly boolean[]): HTMLElement => {
   const section = document.createElement("div");
@@ -157,5 +162,78 @@ describe("scanAll", () => {
     document.body.appendChild(orphan);
 
     expect(scanAll([orphan])).toEqual([]);
+  });
+});
+
+describe("stable-selector independence", () => {
+  it("finds the group when only the stable host classes are present", () => {
+    // Build a section with NO sectionstyle__ hashes — only the semantic selectors.
+    const section = document.createElement("div");
+    section.className = "ui-commons__section__wrapper";
+    const col0 = document.createElement("div");
+    col0.className = "column-33 ui-commons__section__column";
+    const col1 = document.createElement("div");
+    col1.className = "column-33 ui-commons__section__column";
+    const col2 = document.createElement("div");
+    col2.className = "column-33 ui-commons__section__column";
+    col0.appendChild(document.createElement("content-tabs"));
+    col1.appendChild(document.createElement("content-tabs"));
+    section.appendChild(col0);
+    section.appendChild(col1);
+    section.appendChild(col2);
+    document.body.appendChild(section);
+
+    const groups = scanSection(section, widgetsIn(section));
+
+    expect(groups).toHaveLength(1);
+    expect(groups[0].members).toHaveLength(2);
+    expect(groups[0].members[0].column).toBe(col0);
+    expect(groups[0].width).toMatchObject({ kind: "percent" });
+  });
+});
+
+describe("nested section isolation", () => {
+  it("does not include an inner section's columns in the outer group", () => {
+    // Outer section: two 50-wide columns, first holds a widget.
+    const outer = document.createElement("div");
+    outer.className = "ui-commons__section__wrapper";
+    const outerCol0 = document.createElement("div");
+    outerCol0.className = "column-50 ui-commons__section__column";
+    const outerCol1 = document.createElement("div");
+    outerCol1.className = "column-50 ui-commons__section__column";
+    outerCol0.appendChild(document.createElement("content-tabs"));
+    outer.appendChild(outerCol0);
+    outer.appendChild(outerCol1);
+
+    // Nested section inside outerCol1, with its own 100-wide column + widget.
+    const inner = document.createElement("div");
+    inner.className = "ui-commons__section__wrapper";
+    const innerCol = document.createElement("div");
+    innerCol.className = "column-100 ui-commons__section__column";
+    const innerWidget = document.createElement("content-tabs");
+    innerCol.appendChild(innerWidget);
+    inner.appendChild(innerCol);
+    outerCol1.appendChild(inner);
+
+    document.body.appendChild(outer);
+
+    // columnsOf must return only the two direct outer children, not innerCol.
+    // If it used querySelectorAll, it would return 3 elements and the
+    // assertions below (count and width) would both fail.
+    expect(columnsOf(outer)).toHaveLength(2);
+
+    // The outer group covers outerCol0 only (50 out of 50+50 = 50 %).
+    // With querySelectorAll the total would be 50+50+100=200 → 25 %, not 50.
+    const outerGroups = scanSection(outer, new Set([outerCol0.querySelector<HTMLElement>("content-tabs")!]));
+    expect(outerGroups).toHaveLength(1);
+    expect(outerGroups[0].members).toHaveLength(1);
+    expect(outerGroups[0].members[0].column).toBe(outerCol0);
+    expect(outerGroups[0].width).toEqual({ kind: "percent", percent: 50 });
+
+    // scanAll routes innerWidget to the inner section, not the outer.
+    const allGroups = scanAll([innerWidget]);
+    expect(allGroups).toHaveLength(1);
+    expect(allGroups[0].section).toBe(inner);
+    expect(allGroups[0].members[0].column).toBe(innerCol);
   });
 });

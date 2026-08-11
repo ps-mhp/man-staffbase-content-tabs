@@ -99,7 +99,7 @@ const widthOf = (
   if (shares.every((share): share is number => share !== null)) {
     const total = shares.reduce((sum, share) => sum + share, 0);
     if (total > 0) {
-      const mine = members.reduce((sum, member) => sum + (declaredShare(member.column) ?? 0), 0);
+      const mine = members.reduce((sum, member) => sum + shares[columns.indexOf(member.column)], 0);
       return { kind: "percent", percent: (mine * 100) / total };
     }
   }
@@ -135,8 +135,9 @@ export function scanSection(
     run = [];
   };
 
+  const widgetList = Array.from(widgets);
   for (const column of columns) {
-    const widget = Array.from(widgets).find((candidate) => column.contains(candidate));
+    const widget = widgetList.find((candidate) => column.contains(candidate));
     if (widget) {
       run.push({ column, widget });
     } else {
