@@ -38,7 +38,14 @@ const scheduleNotify = (): void => {
   notifyScheduled = true;
   void Promise.resolve().then(() => {
     notifyScheduled = false;
-    listeners.forEach((listener) => listener());
+    const snapshot = [...listeners];
+    snapshot.forEach((listener) => {
+      try {
+        listener();
+      } catch (error) {
+        console.error("[tab-registry] listener threw", error);
+      }
+    });
   });
 };
 

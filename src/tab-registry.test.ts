@@ -89,4 +89,49 @@ describe("tab registry", () => {
 
     expect(listener).not.toHaveBeenCalled();
   });
+
+  it("calls remaining listeners even if the first one throws", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const first = jest.fn(() => {
+      throw new Error("first listener failed");
+    });
+    const second = jest.fn();
+    onTabsChanged(first);
+    onTabsChanged(second);
+
+    registerTab(el(), "a");
+    await Promise.resolve();
+
+    expect(first).toHaveBeenCalledTimes(1);
+    expect(second).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "[tab-registry] listener threw",
+      expect.any(Error)
+    );
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("does not call listeners that subscribe during the current notification batch", async () => {
+    const first = jest.fn();
+    const second = jest.fn();
+    onTabsChanged(first);
+
+    const third = jest.fn();
+    first.mockImplementation(() => {
+      onTabsChanged(third);
+    });
+
+    registerTab(el(), "a");
+    await Promise.resolve();
+
+    expect(first).toHaveBeenCalledTimes(1);
+    expect(second).not.toHaveBeenCalled();
+    expect(third).not.toHaveBeenCalled();
+
+    registerTab(el(), "b");
+    await Promise.resolve();
+
+    expect(third).toHaveBeenCalledTimes(1);
+  });
 });
