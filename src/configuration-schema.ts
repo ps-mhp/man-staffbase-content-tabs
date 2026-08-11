@@ -17,14 +17,20 @@ import { JSONSchema7 } from "json-schema";
 /**
  * Schema for the widget's configuration dialog.
  *
- * The field is `tabTitle`, not `title`: `title` is a global HTML attribute and
+ * The field is `tabtitle`, not `title`: `title` is a global HTML attribute and
  * the browser would turn it into a tooltip on the element.
+ *
+ * All lowercase, one word, and byte-identical to the DOM attribute the widget
+ * reads. The host writes the configuration under this key verbatim
+ * (`setAttribute(key, value)`), and HTML attribute names are lowercased on the
+ * way in — so any camelCase or hyphenated key here would be stored under a
+ * name the widget never looks at, and the value would vanish silently.
  *
  * @see https://rjsf-team.github.io/react-jsonschema-form/docs/
  */
 export const configurationSchema: JSONSchema7 = {
   properties: {
-    tabTitle: {
+    tabtitle: {
       type: "string",
       title: "Titel des Tabs",
     },
@@ -35,7 +41,7 @@ export const configurationSchema: JSONSchema7 = {
  * @see https://rjsf-team.github.io/react-jsonschema-form/docs/api-reference/uiSchema
  */
 export const uiSchema: UiSchema = {
-  tabTitle: {
+  tabtitle: {
     "ui:help": "Beschriftung des Tabs. Diese Spalte wird zu einem Tab dieses Namens.",
   },
 };

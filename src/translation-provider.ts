@@ -49,7 +49,7 @@ const escapeHtml = (text: string): string =>
 export const contentTabsTranslationProvider: TranslationProvider = {
   id: "content-tabs",
   label: "Content-Tabs",
-  ref: { tagName: "content-tabs", attribute: "tab-title" },
+  ref: { tagName: "content-tabs", attribute: "tabtitle" },
 
   toTranslatable: (stored) => {
     const title = unwrap(stored).trim();

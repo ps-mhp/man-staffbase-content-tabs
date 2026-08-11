@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-import { BAR_CLASS, GROUP_CLASS } from "./tabs-transform";
+import { BAR_CLASS, GROUP_CLASS, PANEL_CLASS } from "./tabs-transform";
 
 /** Id of the single style element, which is also how it is recognised again. */
 export const STYLE_ELEMENT_ID = "content-tabs-styles";
@@ -31,7 +31,32 @@ export const STYLE_ELEMENT_ID = "content-tabs-styles";
 export const CONTENT_TABS_CSS = `
 .${GROUP_CLASS} {
   box-sizing: border-box;
+  display: block;
   min-width: 0;
+}
+
+/* A panel is still the host's own column element, and it still carries the
+ * host's column classes — width, positioning, grid placement, the lot. Inside
+ * our container that geometry is wrong: the panels no longer sit side by side,
+ * they stack, and each one must fill the container the group was given. The
+ * class is doubled to outrank the host's single-class rules whichever order
+ * the stylesheets happen to load in, without naming any host class here. */
+.${PANEL_CLASS}.${PANEL_CLASS} {
+  box-sizing: border-box;
+  display: block;
+  position: static;
+  float: none;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-left: 0;
+  margin-right: 0;
+  flex: 1 1 auto;
+  grid-column: auto;
+}
+
+.${PANEL_CLASS}.${PANEL_CLASS}[hidden] {
+  display: none;
 }
 
 .${BAR_CLASS}__list {

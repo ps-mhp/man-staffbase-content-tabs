@@ -30,8 +30,24 @@ import { configurationSchema, uiSchema } from "./configuration-schema";
 import icon from "../resources/content-tabs.svg";
 import pkg from "../package.json";
 
-/** The attribute the host writes for the `tabTitle` configuration field. */
-export const TAB_TITLE_ATTRIBUTE = "tab-title";
+/**
+ * The attribute the host writes for the `tabtitle` configuration field.
+ *
+ * The host stores a configuration value under its schema key verbatim, and the
+ * DOM lowercases attribute names — so this must equal the schema key and
+ * contain no capitals and no hyphen, or the value is written under a name
+ * nothing reads.
+ */
+export const TAB_TITLE_ATTRIBUTE = "tabtitle";
+
+/**
+ * Names an already-saved title may sit under.
+ *
+ * Earlier builds declared the attribute as `tab-title` while the dialog wrote
+ * `tabtitle`, so pages configured with those builds carry either. Reading all
+ * of them costs nothing and keeps existing content working.
+ */
+const TITLE_KEYS = [TAB_TITLE_ATTRIBUTE, "tabTitle", "tab-title"] as const;
 
 /** Attributes handled by the widget; mirrored in the configuration schema. */
 const widgetAttributes: string[] = [TAB_TITLE_ATTRIBUTE];
@@ -57,16 +73,10 @@ export function readTabTitle(raw: unknown): string | null {
  * only ever shows the author-facing label. In the frontend the transform hides
  * this element entirely.
  */
-export function ContentTabsBlockView({
-  title,
-  index,
-}: {
-  title: string | null;
-  index: number;
-}): React.JSX.Element {
+export function ContentTabsBlockView({ title }: { title: string | null }): React.JSX.Element {
   return (
     <div className="content-tabs-block" data-testid="content-tabs-block">
-      <TabLabel title={title} index={index} />
+      <TabLabel title={title} />
     </div>
   );
 }
@@ -77,14 +87,12 @@ const factory: BlockFactory = (BaseBlockClass, _widgetApi) => {
     private _unregister: (() => void) | null = null;
 
     private get tabTitle(): string | null {
-      // The SDK's attribute-to-key mapping could not be verified from this
-      // repo (widget-sdk ships types only, no runtime). The dev harness keys
-      // by the raw DOM attribute name ("tab-title"), while camelCase
-      // ("tabTitle") is the likely production mapping. Accept both so neither
-      // environment silently yields undefined.
-      const attrs = this.parseAttributes<{ tabTitle?: unknown; "tab-title"?: unknown }>();
-      const raw = attrs.tabTitle ?? attrs[TAB_TITLE_ATTRIBUTE];
-      return readTabTitle(raw);
+      const attrs = this.parseAttributes<Record<string, unknown>>();
+      for (const key of TITLE_KEYS) {
+        const title = readTabTitle(attrs[key]);
+        if (title !== null) return title;
+      }
+      return null;
     }
 
     public renderBlock(container: HTMLElement): void {
@@ -98,7 +106,7 @@ const factory: BlockFactory = (BaseBlockClass, _widgetApi) => {
 
       // The SDK is assumed to pass the same container for the life of the block.
       this._root ??= ReactDOM.createRoot(container);
-      this._root.render(<ContentTabsBlockView title={title} index={0} />);
+      this._root.render(<ContentTabsBlockView title={title} />);
     }
 
     public unmountBlock(_container: HTMLElement): void {

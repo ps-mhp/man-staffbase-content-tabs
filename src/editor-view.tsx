@@ -14,7 +14,6 @@
 import React from "react";
 
 import { TabGroup } from "./section-scan";
-import { tabLabel } from "./tabs-view";
 
 /** Marks a column this module has decorated, so the marks can be taken back. */
 export const EDITOR_MARKER = "data-content-tabs-editor";
@@ -25,9 +24,19 @@ export const EDITOR_MARKER = "data-content-tabs-editor";
  * The section is left exactly as it is here — columns stay side by side and
  * every one of them stays editable. Rendering the real tab view would hide the
  * inactive panels, and their content would be out of the author's reach.
+ *
+ * No number is shown when the title is missing. A block renders on its own and
+ * cannot see its position among its neighbours, so any number here would be
+ * the same one on every block — as good as a lie. The frontend numbers its
+ * fallback labels because there the whole group is known at once.
  */
-export function TabLabel({ title, index }: { title: string | null; index: number }): React.JSX.Element {
-  return <span className="content-tabs-editor-label">Tab: {tabLabel(title, index)}</span>;
+export function TabLabel({ title }: { title: string | null }): React.JSX.Element {
+  const trimmed = title?.trim() ?? "";
+  return (
+    <span className="content-tabs-editor-label">
+      {trimmed === "" ? "Tab: noch ohne Titel" : `Tab: ${trimmed}`}
+    </span>
+  );
 }
 
 /**

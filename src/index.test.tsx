@@ -16,10 +16,22 @@ import { render, screen } from "@testing-library/react";
 
 import { encodePayload } from "@shared/payload";
 import { ContentTabsBlockView, readTabTitle, TAB_TITLE_ATTRIBUTE } from "./index";
+import { configurationSchema, uiSchema } from "./configuration-schema";
 
 describe("TAB_TITLE_ATTRIBUTE", () => {
-  it("is the hyphenated attribute the host writes", () => {
-    expect(TAB_TITLE_ATTRIBUTE).toBe("tab-title");
+  it("is the very key the configuration schema stores under", () => {
+    // The host writes the configuration value with the schema key verbatim and
+    // the DOM lowercases it. A capital or a hyphen here and the value lands
+    // under a name nothing reads — which is how the title went missing once.
+    expect(Object.keys(configurationSchema.properties!)).toEqual([TAB_TITLE_ATTRIBUTE]);
+    expect(TAB_TITLE_ATTRIBUTE).toBe(TAB_TITLE_ATTRIBUTE.toLowerCase());
+    expect(TAB_TITLE_ATTRIBUTE).not.toContain("-");
+  });
+
+  it("is the key the dialog's ui hints are filed under", () => {
+    // A ui hint filed under a key the schema does not have is simply ignored,
+    // so the author would lose the help text without any sign of it.
+    expect(Object.keys(uiSchema)).toEqual([TAB_TITLE_ATTRIBUTE]);
   });
 });
 
@@ -54,7 +66,7 @@ describe("readTabTitle", () => {
 
 describe("ContentTabsBlockView", () => {
   it("labels the tab for the author", () => {
-    render(<ContentTabsBlockView title="Übersicht" index={0} />);
+    render(<ContentTabsBlockView title="Übersicht" />);
 
     expect(screen.getByText("Tab: Übersicht")).toBeInTheDocument();
   });

@@ -16,7 +16,7 @@ import { TAB_MARKER, contentTabsTranslationProvider as provider } from "./transl
 
 describe("contentTabsTranslationProvider", () => {
   it("points at the widget's own attribute", () => {
-    expect(provider.ref).toEqual({ tagName: "content-tabs", attribute: "tab-title" });
+    expect(provider.ref).toEqual({ tagName: "content-tabs", attribute: "tabtitle" });
   });
 
   it("sends the title as a marked element", () => {

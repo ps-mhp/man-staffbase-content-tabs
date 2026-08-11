@@ -88,6 +88,38 @@ function makeElement(): HTMLElement {
 }
 
 describe("ContentTabsBlock lifecycle", () => {
+  it("shows a title the dialog saved under its schema key", async () => {
+    // The host writes a configuration value under the schema key verbatim, and
+    // the DOM lowercases the name. Reading it back under any other spelling is
+    // how every tab ended up nameless on a published page.
+    const [schemaKey] = Object.keys(configurationSchema.properties!);
+    const el = makeElement();
+
+    await act(async () => {
+      el.setAttribute(schemaKey, "Übersicht");
+      document.body.appendChild(el);
+    });
+    await waitFor(() => {
+      expect(registeredTabs()).toContain(el);
+    });
+
+    expect(titleOf(el)).toBe("Übersicht");
+  });
+
+  it("still reads a title an earlier build saved as tab-title", async () => {
+    const el = makeElement();
+
+    await act(async () => {
+      el.setAttribute("tab-title", "Alt gespeichert");
+      document.body.appendChild(el);
+    });
+    await waitFor(() => {
+      expect(registeredTabs()).toContain(el);
+    });
+
+    expect(titleOf(el)).toBe("Alt gespeichert");
+  });
+
   it("registers the element with the correct title when appended to the document", async () => {
     const el = makeElement();
     await mount(el, "Übersicht");

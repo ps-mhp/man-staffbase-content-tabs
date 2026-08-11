@@ -38,15 +38,18 @@ afterEach(() => {
 
 describe("TabLabel", () => {
   it("names the tab", () => {
-    render(<TabLabel title="Übersicht" index={0} />);
+    render(<TabLabel title="Übersicht" />);
 
     expect(screen.getByText("Tab: Übersicht")).toBeInTheDocument();
   });
 
-  it("falls back to a number while the title is missing", () => {
-    render(<TabLabel title={null} index={1} />);
+  it("says the title is still missing rather than inventing a number", () => {
+    // Every block renders alone and cannot see its neighbours, so a number
+    // here would read "Tab 1" on all of them at once.
+    render(<TabLabel title={null} />);
 
-    expect(screen.getByText("Tab: Tab 2")).toBeInTheDocument();
+    expect(screen.getByText("Tab: noch ohne Titel")).toBeInTheDocument();
+    expect(screen.queryByText(/Tab: Tab \d/)).toBeNull();
   });
 });
 
