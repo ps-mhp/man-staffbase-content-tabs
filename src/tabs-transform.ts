@@ -83,15 +83,33 @@ export interface MountedGroup {
 
 export const isTransformed = (column: HTMLElement): boolean => column.hasAttribute(GROUP_MARKER);
 
+/**
+ * Claims the space the replaced columns occupied.
+ *
+ * The share is asked for as flex *growth*, not as a fixed basis. A section may
+ * put a gap between its columns and size the columns themselves around it
+ * (`calc(25% - …)`). Three such columns plus the two gaps between them come to
+ * slightly less than their three shares add up to, so a container of exactly
+ * 75% is wider than the space that was freed — and the column left beside it
+ * no longer fits on the line and drops below.
+ *
+ * With a zero basis and a growth proportional to the share, the container asks
+ * for no space of its own and then takes what is left over once the remaining
+ * columns and every gap have had theirs. That is the freed space by
+ * definition, at any viewport width, whatever the section's gutters are. Two
+ * groups in one section still divide it in the ratio of their shares.
+ *
+ * The percentage is stated as a width as well, for a section that lays its
+ * columns out as plain blocks: there `flex` means nothing, and in a flex
+ * container the basis takes precedence over the width anyway.
+ */
 const applyWidth = (container: HTMLElement, width: GroupWidth): void => {
   if (width.kind === "grid") {
     container.style.setProperty("grid-column", `span ${width.span}`, "important");
     return;
   }
   if (width.kind === "percent") {
-    // Both, because the section may lay its columns out with flex or as plain
-    // blocks and only one of the two takes effect in either case.
-    container.style.setProperty("flex", `0 0 ${width.percent}%`, "important");
+    container.style.setProperty("flex", `${width.percent} 1 0%`, "important");
     container.style.setProperty("width", `${width.percent}%`, "important");
     container.style.setProperty("max-width", `${width.percent}%`, "important");
     container.style.setProperty("min-width", "0", "important");

@@ -45,7 +45,7 @@ export const CONTENT_TABS_CSS = `
 }
 
 .content-tabs-tab {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
   appearance: none;
   background: transparent;
   border: 0;
@@ -62,7 +62,8 @@ export const CONTENT_TABS_CSS = `
 }
 
 .content-tabs-tab[aria-selected="true"] {
-  border-bottom-color: currentColor;
+  border-bottom-color: var(--man-red);
+  border-bottom-size: var(--man-border-width);
   font-weight: 600;
 }
 

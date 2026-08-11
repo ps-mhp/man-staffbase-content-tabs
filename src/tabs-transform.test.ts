@@ -221,7 +221,31 @@ describe("transformGroup", () => {
     const mounted = transformGroup(group)!;
 
     expect(mounted.container.style.width).toBe("50%");
-    expect(mounted.container.style.flex).toContain("50%");
+    expect(mounted.container.style.maxWidth).toBe("50%");
+  });
+
+  it("asks for the freed space as growth, not as a fixed size", () => {
+    // A fixed 50% is wider than the two columns were, whenever the section
+    // puts a gap between its columns and sizes them around it. The column
+    // beside the group then no longer fits on the line and drops below it.
+    const group = build(3, [0, 1]);
+
+    const mounted = transformGroup(group)!;
+
+    expect(mounted.container.style.flex).toBe("50 1 0%");
+  });
+
+  it("divides the space in the ratio of the shares when a section holds two groups", () => {
+    const two = build(4, [0, 1]);
+    const third = two.section.querySelector<HTMLElement>('[data-index="2"]')!;
+    const one: TabGroup = {
+      section: two.section,
+      members: [{ column: third, widget: third.querySelector<HTMLElement>("content-tabs")! }],
+      width: { kind: "percent", percent: 25 },
+    };
+
+    expect(transformGroup(two)!.container.style.flex).toBe("50 1 0%");
+    expect(transformGroup(one)!.container.style.flex).toBe("25 1 0%");
   });
 
   it("claims a column span when the group asks for one", () => {
