@@ -74,11 +74,53 @@ describe("markEditorGroups", () => {
 
   it("removes every mark it made", () => {
     const group = buildGroup(2);
-    const before = group.section.innerHTML;
+    // Capture the full body so marks applied outside the section are also caught.
+    const before = document.body.innerHTML;
 
-    markEditorGroups([group])();
+    const cleanup = markEditorGroups([group]);
+    // While marked, every column carries EDITOR_MARKER.
+    group.members.forEach(({ column }) => {
+      expect(column.hasAttribute("data-content-tabs-editor")).toBe(true);
+    });
 
-    expect(group.section.innerHTML).toBe(before);
+    cleanup();
+
+    // After cleanup no column should carry the marker.
+    group.members.forEach(({ column }) => {
+      expect(column.hasAttribute("data-content-tabs-editor")).toBe(false);
+    });
+    // The DOM must be byte-identical to what it was before any marking.
+    expect(document.body.innerHTML).toBe(before);
+  });
+
+  it("is idempotent — calling twice then cleaning up the first call restores pristine markup", () => {
+    const group = buildGroup(2);
+    const before = document.body.innerHTML;
+
+    // First call marks the columns and owns them.
+    const cleanup1 = markEditorGroups([group]);
+    // Second call finds all columns already marked and adds nothing to its own
+    // `marked` list — its cleanup is therefore a no-op, but it must still be
+    // a callable function (callers must not need to know call order).
+    const cleanup2 = markEditorGroups([group]);
+
+    // Both calls agree: every column carries the marker.
+    group.members.forEach(({ column }) => {
+      expect(column.hasAttribute("data-content-tabs-editor")).toBe(true);
+    });
+
+    // The second cleanup owns nothing — calling it must leave the marks intact.
+    cleanup2();
+    group.members.forEach(({ column }) => {
+      expect(column.hasAttribute("data-content-tabs-editor")).toBe(true);
+    });
+
+    // The first cleanup owns all columns — after it runs the DOM is pristine.
+    cleanup1();
+    group.members.forEach(({ column }) => {
+      expect(column.hasAttribute("data-content-tabs-editor")).toBe(false);
+    });
+    expect(document.body.innerHTML).toBe(before);
   });
 
   it("does not move or hide anything", () => {

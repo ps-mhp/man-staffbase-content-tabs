@@ -44,6 +44,10 @@ export function markEditorGroups(groups: readonly TabGroup[]): () => void {
 
   groups.forEach((group) => {
     group.members.forEach(({ column }, index) => {
+      // Skip columns that are already marked — a second call must be a no-op
+      // so `marked` never accumulates duplicates across repeated invocations.
+      if (column.hasAttribute(EDITOR_MARKER)) return;
+
       column.setAttribute(EDITOR_MARKER, "");
       if (index === 0) column.classList.add("content-tabs-group-start");
       if (index === group.members.length - 1) column.classList.add("content-tabs-group-end");
