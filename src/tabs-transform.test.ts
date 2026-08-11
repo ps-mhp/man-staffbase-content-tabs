@@ -149,4 +149,50 @@ describe("transformGroup", () => {
     expect(mounted.container.firstElementChild).toBe(mounted.bar);
     expect(mounted.bar.childElementCount).toBe(0);
   });
+
+  it("setActive with an out-of-range index (>= length) leaves the current panel visible", () => {
+    const group = build(2, [0, 1]);
+    const mounted = transformGroup(group)!;
+    // panel 0 is active after transform
+    mounted.setActive(group.members.length); // out of range
+
+    const visibleCount = group.members.filter(({ column }) => !column.hidden).length;
+    expect(visibleCount).toBe(1);
+    expect(group.members[0].column.hidden).toBe(false);
+  });
+
+  it("setActive with a negative index leaves the current panel visible", () => {
+    const group = build(2, [0, 1]);
+    const mounted = transformGroup(group)!;
+    mounted.setActive(1); // activate panel 1 first
+    mounted.setActive(-1); // out of range
+
+    const visibleCount = group.members.filter(({ column }) => !column.hidden).length;
+    expect(visibleCount).toBe(1);
+    expect(group.members[1].column.hidden).toBe(false);
+  });
+
+  it("restores the section exactly when members are in the middle of non-member columns", () => {
+    // columns 0 and 3 are non-members; 1 and 2 are members
+    const group = build(4, [1, 2]);
+    const col1 = group.members[0].column;
+    const col2 = group.members[1].column;
+    const before = group.section.innerHTML;
+
+    transformGroup(group)!.revert();
+
+    expect(group.section.innerHTML).toBe(before);
+    // node identity: same objects are back in place
+    expect(group.section.children[1]).toBe(col1);
+    expect(group.section.children[2]).toBe(col2);
+  });
+
+  it("restores a column that was hidden before the transform", () => {
+    const group = build(2, [0, 1]);
+    group.members[0].column.hidden = true; // pre-existing hidden state
+
+    transformGroup(group)!.revert();
+
+    expect(group.members[0].column.hidden).toBe(true);
+  });
 });

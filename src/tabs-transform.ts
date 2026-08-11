@@ -69,6 +69,7 @@ export function transformGroup(group: TabGroup): MountedGroup | null {
   const originalStyles = group.members.map(({ column, widget }) => ({
     column: column.getAttribute("style"),
     widget: widget.getAttribute("style"),
+    hidden: column.hidden,
   }));
 
   const container = document.createElement("div");
@@ -90,6 +91,7 @@ export function transformGroup(group: TabGroup): MountedGroup | null {
   });
 
   const setActive = (index: number): void => {
+    if (index < 0 || index >= group.members.length) return;
     group.members.forEach(({ column }, position) => {
       const active = position === index;
       column.hidden = !active;
@@ -104,7 +106,7 @@ export function transformGroup(group: TabGroup): MountedGroup | null {
       const saved = originalStyles[index];
       column.removeAttribute(GROUP_MARKER);
       column.classList.remove(PANEL_CLASS);
-      column.hidden = false;
+      column.hidden = saved.hidden;
       if (saved.column === null) column.removeAttribute("style");
       else column.setAttribute("style", saved.column);
       if (saved.widget === null) widget.removeAttribute("style");
