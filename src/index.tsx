@@ -12,6 +12,8 @@
  */
 
 import { setPublicPathFromBundle } from "@shared/public-path";
+import { getTranslationRegistry } from "@shared/translation/registry";
+import { contentTabsTranslationProvider } from "./translation-provider";
 
 // Must run before any dynamic `import()`, so that lazily loaded chunks come
 // from the CDN the bundle was served from and not from the hosting page.
@@ -132,6 +134,16 @@ const externalBlockDefinition: ExternalBlockDefinition = {
   author: pkg.author,
   version: pkg.version,
 };
+
+/**
+ * Installed unconditionally at module load. The registry is shared by every
+ * widget bundle and installs its `fetch` wrapper only once; whichever bundle
+ * loads first does it, the rest just register. On a live content page the
+ * translation endpoint is never called, so this costs nothing there.
+ */
+export const stopTranslationProvider = getTranslationRegistry().register(
+  contentTabsTranslationProvider,
+);
 
 // The guard lets the module load in Jest/jsdom where defineBlock is absent,
 // while keeping both calls unconditional in the real Staffbase host, where it
