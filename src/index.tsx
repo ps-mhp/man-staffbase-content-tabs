@@ -23,6 +23,7 @@ import { BlockFactory, BlockDefinition, ExternalBlockDefinition, BaseBlock } fro
 import { decodePayload, isPayload } from "@shared/payload";
 import { registerTab, setTabTitle } from "./tab-registry";
 import { TabLabel } from "./editor-view";
+import { startContentTabs } from "./bootstrap";
 import { configurationSchema, uiSchema } from "./configuration-schema";
 import icon from "../resources/content-tabs.svg";
 import pkg from "../package.json";
@@ -132,11 +133,11 @@ const externalBlockDefinition: ExternalBlockDefinition = {
   version: pkg.version,
 };
 
-// Guard exists because this module is imported directly by index.test.tsx under
-// jsdom, where `window.defineBlock` does not exist, while in the real Staffbase
-// host it is always present. The sibling `table-widget` calls `defineBlock`
-// unconditionally because its test installs a dev harness first — the
-// divergence here is deliberate.
+// The guard lets the module load in Jest/jsdom where defineBlock is absent,
+// while keeping both calls unconditional in the real Staffbase host, where it
+// is always present — on the editor and on a published page alike. The
+// bootstrap is tied to it because it only has work to do where blocks exist.
 if (typeof window.defineBlock === "function") {
   window.defineBlock(externalBlockDefinition);
+  startContentTabs();
 }
