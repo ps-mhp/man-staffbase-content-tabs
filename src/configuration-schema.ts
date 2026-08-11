@@ -16,13 +16,26 @@ import { JSONSchema7 } from "json-schema";
 
 /**
  * Schema for the widget's configuration dialog.
+ *
+ * The field is `tabTitle`, not `title`: `title` is a global HTML attribute and
+ * the browser would turn it into a tooltip on the element.
+ *
  * @see https://rjsf-team.github.io/react-jsonschema-form/docs/
  */
 export const configurationSchema: JSONSchema7 = {
-  properties: {},
+  properties: {
+    tabTitle: {
+      type: "string",
+      title: "Titel des Tabs",
+    },
+  },
 };
 
 /**
  * @see https://rjsf-team.github.io/react-jsonschema-form/docs/api-reference/uiSchema
  */
-export const uiSchema: UiSchema = {};
+export const uiSchema: UiSchema = {
+  tabTitle: {
+    "ui:help": "Beschriftung des Tabs. Diese Spalte wird zu einem Tab dieses Namens.",
+  },
+};

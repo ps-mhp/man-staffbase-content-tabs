@@ -20,31 +20,81 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { BlockFactory, BlockDefinition, ExternalBlockDefinition, BaseBlock } from "widget-sdk";
+import { decodePayload, isPayload } from "@shared/payload";
+import { registerTab, setTabTitle } from "./tab-registry";
+import { TabLabel } from "./editor-view";
 import { configurationSchema, uiSchema } from "./configuration-schema";
 import icon from "../resources/content-tabs.svg";
 import pkg from "../package.json";
 
+/** The attribute the host writes for the `tabTitle` configuration field. */
+export const TAB_TITLE_ATTRIBUTE = "tab-title";
+
 /** Attributes handled by the widget; mirrored in the configuration schema. */
-const widgetAttributes: string[] = [];
+const widgetAttributes: string[] = [TAB_TITLE_ATTRIBUTE];
+
+/**
+ * The tab title, whatever shape it arrives in.
+ *
+ * The value has already passed the host's own decoding by the time it gets
+ * here. What may still be wrapped is our own `b64:` envelope, which survives a
+ * machine-translation pass — see `@shared/payload`.
+ */
+export function readTabTitle(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const text = isPayload(raw) ? (decodePayload(raw) ?? "") : raw;
+  const trimmed = text.trim();
+  return trimmed === "" ? null : trimmed;
+}
 
 /**
  * Rendered inside the `<content-tabs>` element itself.
  *
- * The widget does its actual work on the *surrounding* section, not in its own
- * element — so this block stays deliberately unobtrusive. It exists to give
- * editors something to select and drag, and to mark the section as tab-enabled.
+ * The widget does its work on the *surrounding* section, so its own element
+ * only ever shows the author-facing label. In the frontend the transform hides
+ * this element entirely.
  */
-export function ContentTabsPlaceholder(): React.JSX.Element {
-  return <div data-testid="content-tabs-placeholder">Content-Tabs</div>;
+export function ContentTabsBlockView({
+  title,
+  index,
+}: {
+  title: string | null;
+  index: number;
+}): React.JSX.Element {
+  return (
+    <div className="content-tabs-block" data-testid="content-tabs-block">
+      <TabLabel title={title} index={index} />
+    </div>
+  );
 }
 
 const factory: BlockFactory = (BaseBlockClass, _widgetApi) => {
   return class ContentTabsBlock extends BaseBlockClass implements BaseBlock {
     private _root: ReactDOM.Root | null = null;
+    private _unregister: (() => void) | null = null;
+
+    private get tabTitle(): string | null {
+      return readTabTitle(this.parseAttributes<{ tabTitle?: unknown }>().tabTitle);
+    }
 
     public renderBlock(container: HTMLElement): void {
+      const title = this.tabTitle;
+
+      // First render announces the block; later ones only update the title, so
+      // the block keeps its place in the registration order and tabs do not
+      // reshuffle while the author types.
+      if (this._unregister === null) this._unregister = registerTab(this, title);
+      else setTabTitle(this, title);
+
       this._root ??= ReactDOM.createRoot(container);
-      this._root.render(<ContentTabsPlaceholder />);
+      this._root.render(<ContentTabsBlockView title={title} index={0} />);
+    }
+
+    public unmountBlock(_container: HTMLElement): void {
+      this._unregister?.();
+      this._unregister = null;
+      this._root?.unmount();
+      this._root = null;
     }
 
     public static get observedAttributes(): string[] {
@@ -74,9 +124,12 @@ const externalBlockDefinition: ExternalBlockDefinition = {
   version: pkg.version,
 };
 
-// Guard lets the module load in Jest/jsdom where defineBlock is absent, while
-// keeping the call unconditional in the real Staffbase host where it is always
-// present (missing it there would silently skip widget registration).
+// In the real Staffbase host `defineBlock` is always present; this guard only
+// fires when the module loads outside the host (e.g. Jest/jsdom). If it does
+// fire in an unexpected context, log an error so the problem is visible rather
+// than silent.
 if (typeof window.defineBlock === "function") {
   window.defineBlock(externalBlockDefinition);
+} else {
+  console.error("[content-tabs] window.defineBlock is not available — block could not register.");
 }
