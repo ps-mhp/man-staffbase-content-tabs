@@ -43,6 +43,13 @@ describe("readTabTitle", () => {
     expect(readTabTitle(42)).toBeNull();
     expect(readTabTitle({})).toBeNull();
   });
+
+  it("treats a corrupt b64: envelope as no title", () => {
+    // isPayload is true (starts with "b64:") but decodePayload returns null
+    // because the rest contains characters outside the base64 alphabet.
+    const corrupt = "b64:!!!not-base64!!!";
+    expect(readTabTitle(corrupt)).toBeNull();
+  });
 });
 
 describe("ContentTabsBlockView", () => {

@@ -74,7 +74,14 @@ const factory: BlockFactory = (BaseBlockClass, _widgetApi) => {
     private _unregister: (() => void) | null = null;
 
     private get tabTitle(): string | null {
-      return readTabTitle(this.parseAttributes<{ tabTitle?: unknown }>().tabTitle);
+      // The SDK's attribute-to-key mapping could not be verified from this
+      // repo (widget-sdk ships types only, no runtime). The dev harness keys
+      // by the raw DOM attribute name ("tab-title"), while camelCase
+      // ("tabTitle") is the likely production mapping. Accept both so neither
+      // environment silently yields undefined.
+      const attrs = this.parseAttributes<{ tabTitle?: unknown; "tab-title"?: unknown }>();
+      const raw = attrs.tabTitle ?? attrs[TAB_TITLE_ATTRIBUTE];
+      return readTabTitle(raw);
     }
 
     public renderBlock(container: HTMLElement): void {
@@ -86,6 +93,7 @@ const factory: BlockFactory = (BaseBlockClass, _widgetApi) => {
       if (this._unregister === null) this._unregister = registerTab(this, title);
       else setTabTitle(this, title);
 
+      // The SDK is assumed to pass the same container for the life of the block.
       this._root ??= ReactDOM.createRoot(container);
       this._root.render(<ContentTabsBlockView title={title} index={0} />);
     }
