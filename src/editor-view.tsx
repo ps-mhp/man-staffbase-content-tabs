@@ -40,33 +40,42 @@ export function TabLabel({ title, index }: { title: string | null; index: number
  * @returns a function taking every mark back.
  */
 export function markEditorGroups(groups: readonly TabGroup[]): () => void {
-  const marked: HTMLElement[] = [];
-
   groups.forEach((group) => {
     group.members.forEach(({ column }, index) => {
-      // Skip columns that are already marked — a second call must be a no-op
-      // so `marked` never accumulates duplicates across repeated invocations.
+      // Skip columns already marked — the cleanup iterates groups directly,
+      // so skipping here prevents double-adding classes on a second call.
       if (column.hasAttribute(EDITOR_MARKER)) return;
 
       column.setAttribute(EDITOR_MARKER, "");
+      // A group of one is simultaneously its own start and end.
       if (index === 0) column.classList.add("content-tabs-group-start");
+      // A group of one is simultaneously its own start and end.
       if (index === group.members.length - 1) column.classList.add("content-tabs-group-end");
       if (index > 0 && index < group.members.length - 1) {
         column.classList.add("content-tabs-group-middle");
       }
-      marked.push(column);
     });
   });
 
   return () => {
-    marked.forEach((column) => {
-      column.removeAttribute(EDITOR_MARKER);
-      column.classList.remove(
-        "content-tabs-group-start",
-        "content-tabs-group-middle",
-        "content-tabs-group-end",
-      );
-      if (column.getAttribute("class") === "") column.removeAttribute("class");
+    // Iterate over all columns in the groups. At cleanup time, only unmark
+    // columns that still carry EDITOR_MARKER — if the marker is already gone
+    // another cleanup has handled it and this one must not double-remove.
+    // Using groups (not just a captured list) makes every cleanup independently
+    // able to restore pristine markup regardless of which call's cleanup runs last.
+    groups.forEach((group) => {
+      group.members.forEach(({ column }) => {
+        if (!column.hasAttribute(EDITOR_MARKER)) return;
+
+        column.removeAttribute(EDITOR_MARKER);
+        column.classList.remove(
+          "content-tabs-group-start",
+          "content-tabs-group-middle",
+          "content-tabs-group-end",
+        );
+        // Restore byte-identical markup: drop the class attribute when empty.
+        if (column.classList.length === 0) column.removeAttribute("class");
+      });
     });
   };
 }

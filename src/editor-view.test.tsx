@@ -15,7 +15,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 
 import { TabGroup } from "./section-scan";
-import { TabLabel, markEditorGroups } from "./editor-view";
+import { TabLabel, markEditorGroups, EDITOR_MARKER } from "./editor-view";
 
 const buildGroup = (size: number): TabGroup => {
   const section = document.createElement("div");
@@ -59,6 +59,8 @@ describe("markEditorGroups", () => {
     expect(group.members[0].column.classList.contains("content-tabs-group-start")).toBe(true);
     expect(group.members[1].column.classList.contains("content-tabs-group-middle")).toBe(true);
     expect(group.members[2].column.classList.contains("content-tabs-group-end")).toBe(true);
+    // The marker attribute must also be set, independently of the classes.
+    expect(group.members[0].column.hasAttribute(EDITOR_MARKER)).toBe(true);
   });
 
   it("gives a group of one both ends", () => {
@@ -80,46 +82,92 @@ describe("markEditorGroups", () => {
     const cleanup = markEditorGroups([group]);
     // While marked, every column carries EDITOR_MARKER.
     group.members.forEach(({ column }) => {
-      expect(column.hasAttribute("data-content-tabs-editor")).toBe(true);
+      expect(column.hasAttribute(EDITOR_MARKER)).toBe(true);
     });
 
     cleanup();
 
     // After cleanup no column should carry the marker.
     group.members.forEach(({ column }) => {
-      expect(column.hasAttribute("data-content-tabs-editor")).toBe(false);
+      expect(column.hasAttribute(EDITOR_MARKER)).toBe(false);
     });
     // The DOM must be byte-identical to what it was before any marking.
     expect(document.body.innerHTML).toBe(before);
   });
 
-  it("is idempotent — calling twice then cleaning up the first call restores pristine markup", () => {
+  it("is idempotent — calling twice then running either cleanup restores pristine markup", () => {
     const group = buildGroup(2);
     const before = document.body.innerHTML;
 
-    // First call marks the columns and owns them.
+    // First call marks the columns.
     const cleanup1 = markEditorGroups([group]);
-    // Second call finds all columns already marked and adds nothing to its own
-    // `marked` list — its cleanup is therefore a no-op, but it must still be
-    // a callable function (callers must not need to know call order).
+    // Second call finds all columns already marked — skips adding classes again.
+    // Both cleanups iterate groups and guard on EDITOR_MARKER at cleanup time,
+    // so whichever runs first does the work; the second is safely a no-op.
     const cleanup2 = markEditorGroups([group]);
 
     // Both calls agree: every column carries the marker.
     group.members.forEach(({ column }) => {
-      expect(column.hasAttribute("data-content-tabs-editor")).toBe(true);
+      expect(column.hasAttribute(EDITOR_MARKER)).toBe(true);
     });
 
-    // The second cleanup owns nothing — calling it must leave the marks intact.
+    // Whichever cleanup runs first removes all marks.
     cleanup2();
     group.members.forEach(({ column }) => {
-      expect(column.hasAttribute("data-content-tabs-editor")).toBe(true);
+      expect(column.hasAttribute(EDITOR_MARKER)).toBe(false);
     });
+    expect(document.body.innerHTML).toBe(before);
 
-    // The first cleanup owns all columns — after it runs the DOM is pristine.
+    // The second cleanup (cleanup1) sees no markers and does nothing — still pristine.
     cleanup1();
     group.members.forEach(({ column }) => {
-      expect(column.hasAttribute("data-content-tabs-editor")).toBe(false);
+      expect(column.hasAttribute(EDITOR_MARKER)).toBe(false);
     });
+    expect(document.body.innerHTML).toBe(before);
+  });
+
+  it("is safe when the second cleanup is the only one kept — call twice, discard first cleanup", () => {
+    const group = buildGroup(2);
+    const before = document.body.innerHTML;
+
+    // Simulate the React pattern: store only the latest returned cleanup.
+    markEditorGroups([group]); // first cleanup discarded
+    const cleanup2 = markEditorGroups([group]);
+
+    // Marks are still in place (first call set them, second call is a no-op).
+    group.members.forEach(({ column }) => {
+      expect(column.hasAttribute(EDITOR_MARKER)).toBe(true);
+    });
+
+    // Running only the second cleanup must still produce fully pristine markup.
+    cleanup2();
+
+    group.members.forEach(({ column }) => {
+      expect(column.hasAttribute(EDITOR_MARKER)).toBe(false);
+    });
+    expect(document.body.innerHTML).toBe(before);
+  });
+
+  it("removes the class attribute entirely when the column had no pre-existing classes", () => {
+    // Build a column whose only classes are the ones this module adds.
+    const section = document.createElement("div");
+    section.className = "ui-commons__section__wrapper";
+    const column = document.createElement("div");
+    // No extra classes — classList is empty before marking.
+    const widget = document.createElement("content-tabs");
+    column.appendChild(widget);
+    section.appendChild(column);
+    document.body.appendChild(section);
+
+    const group: TabGroup = { section, members: [{ column, widget }], width: { kind: "none" } };
+    const before = document.body.innerHTML;
+
+    const cleanup = markEditorGroups([group]);
+    cleanup();
+
+    // The class attribute must be completely absent — not present but empty.
+    expect(column.hasAttribute("class")).toBe(false);
+    // Markup is byte-identical to before marking.
     expect(document.body.innerHTML).toBe(before);
   });
 
