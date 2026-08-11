@@ -27,13 +27,24 @@ import pkg from "../package.json";
 /** Attributes handled by the widget; mirrored in the configuration schema. */
 const widgetAttributes: string[] = [];
 
+/**
+ * Rendered inside the `<content-tabs>` element itself.
+ *
+ * The widget does its actual work on the *surrounding* section, not in its own
+ * element — so this block stays deliberately unobtrusive. It exists to give
+ * editors something to select and drag, and to mark the section as tab-enabled.
+ */
+export function ContentTabsPlaceholder(): React.JSX.Element {
+  return <div data-testid="content-tabs-placeholder">Content-Tabs</div>;
+}
+
 const factory: BlockFactory = (BaseBlockClass, _widgetApi) => {
   return class ContentTabsBlock extends BaseBlockClass implements BaseBlock {
     private _root: ReactDOM.Root | null = null;
 
     public renderBlock(container: HTMLElement): void {
       this._root ??= ReactDOM.createRoot(container);
-      this._root.render(<div />);
+      this._root.render(<ContentTabsPlaceholder />);
     }
 
     public static get observedAttributes(): string[] {
@@ -63,4 +74,9 @@ const externalBlockDefinition: ExternalBlockDefinition = {
   version: pkg.version,
 };
 
-window.defineBlock(externalBlockDefinition);
+// Guard lets the module load in Jest/jsdom where defineBlock is absent, while
+// keeping the call unconditional in the real Staffbase host where it is always
+// present (missing it there would silently skip widget registration).
+if (typeof window.defineBlock === "function") {
+  window.defineBlock(externalBlockDefinition);
+}
