@@ -19,16 +19,41 @@ export const STYLE_ELEMENT_ID = "content-tabs-styles";
 /**
  * The widget's stylesheet.
  *
- * Deliberately free of colours and fonts beyond `currentColor` and the
- * inherited family: the widget sits inside pages that already have a design,
- * and a tab strip that brings its own palette looks bolted on. Only layout,
- * spacing and the selected state are stated here.
+ * Colours are stated explicitly rather than inherited. The strip renders
+ * inside a host page whose own button styling (dark fill, own text colour)
+ * otherwise wins on specificity and turns a tab into an unreadable block, and
+ * `var(--man-red)` is not guaranteed to exist on every page. Every colour
+ * therefore has a literal value here, exposed as a custom property on the
+ * group so a page can still override it deliberately.
+ *
+ * The rules that fight host button CSS are written as
+ * `.content-tabs-bar__list button.content-tabs-tab` to outweigh the usual
+ * `.some-wrapper button` selectors.
+ *
+ * Background, colour and geometry additionally carry `!important`. The
+ * Staffbase stylesheet styles every `button` as a full-width call-to-action
+ * (`width: 90%`, `display: block`, `margin: auto`, brand background) and the
+ * MAN theme raises its `:focus` background to `!important`, which is what
+ * painted the selected tab as a dark block with invisible text. Specificity
+ * alone cannot beat an `!important` declaration, so these few properties have
+ * to be stated at the same weight.
  *
  * The strip scrolls sideways rather than wrapping. On a narrow screen wrapped
  * tabs push the content down by an unpredictable amount, and the panel below
  * then jumps as the author switches tabs.
  */
 export const CONTENT_TABS_CSS = `
+.${GROUP_CLASS},
+.${BAR_CLASS},
+.${BAR_CLASS}__list {
+  --content-tabs-accent: var(--man-red, #e40045);
+  --content-tabs-tab-bg: transparent;
+  --content-tabs-tab-color: #5a6874;
+  --content-tabs-tab-hover-color: #1c2b39;
+  --content-tabs-tab-active-color: #1c2b39;
+  --content-tabs-strip-border: #d5d9dd;
+}
+
 .${GROUP_CLASS} {
   box-sizing: border-box;
   display: block;
@@ -40,34 +65,60 @@ export const CONTENT_TABS_CSS = `
   gap: 4px;
   overflow-x: auto;
   scrollbar-width: thin;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  background: transparent;
+  border-bottom: 1px solid var(--content-tabs-strip-border);
   margin-bottom: 16px;
 }
 
-.content-tabs-tab {
+.${BAR_CLASS}__list button.content-tabs-tab {
   flex: 0 1 auto;
   appearance: none;
-  background: transparent;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  color: inherit;
+  -webkit-appearance: none;
+  background: var(--content-tabs-tab-bg) !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: var(--content-tabs-tab-color) !important;
   cursor: pointer;
+  display: inline-block !important;
   font: inherit;
-  padding: 8px 16px;
+  margin: 0 !important;
+  min-height: 0 !important;
+  opacity: 1;
+  padding: 8px 16px !important;
+  position: relative;
+  text-shadow: none;
   white-space: nowrap;
+  width: auto !important;
 }
 
-.content-tabs-tab:hover {
-  border-bottom: 2px solid var(--man-red);
+.${BAR_CLASS}__list button.content-tabs-tab:hover,
+.${BAR_CLASS}__list button.content-tabs-tab:focus,
+.${BAR_CLASS}__list button.content-tabs-tab:active {
+  background: var(--content-tabs-tab-bg) !important;
+  background-image: none !important;
+  color: var(--content-tabs-tab-hover-color) !important;
+  border-bottom-color: var(--content-tabs-accent) !important;
 }
 
-.content-tabs-tab[aria-selected="true"] {
-  border-bottom: 2px solid var(--man-red);
+.${BAR_CLASS}__list button.content-tabs-tab[aria-selected="true"] {
+  background: var(--content-tabs-tab-bg) !important;
+  background-image: none !important;
+  color: var(--content-tabs-tab-active-color) !important;
+  border-bottom-color: var(--content-tabs-accent) !important;
   font-weight: 600;
 }
 
-.content-tabs-tab:focus-visible {
-  outline: 2px solid currentColor;
+/* The theme draws its own underline on tab-like buttons via ::after. */
+.${BAR_CLASS}__list button.content-tabs-tab::after,
+.${BAR_CLASS}__list button.content-tabs-tab::before {
+  content: none !important;
+}
+
+.${BAR_CLASS}__list button.content-tabs-tab:focus-visible {
+  outline: 2px solid var(--content-tabs-accent) !important;
   outline-offset: -2px;
 }
 
@@ -89,9 +140,9 @@ export const CONTENT_TABS_CSS = `
 
 .content-tabs-editor-label {
   display: inline-block;
+  color: #5a6874;
   font-size: 12px;
   font-weight: 600;
-  opacity: 0.7;
   padding: 2px 0;
 }
 `;
