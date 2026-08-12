@@ -67,11 +67,11 @@ export const CONTENT_TABS_CSS = `
   scrollbar-width: thin;
   background: transparent;
   border-bottom: 1px solid var(--content-tabs-strip-border);
-  margin-bottom: 16px;
+  margin-bottom: 30px;
 }
 
 .${BAR_CLASS}__list button.content-tabs-tab {
-  flex: 0 1 auto;
+  flex: 1 0 auto;
   appearance: none;
   -webkit-appearance: none;
   background: var(--content-tabs-tab-bg) !important;
