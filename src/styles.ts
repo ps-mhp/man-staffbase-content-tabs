@@ -21,22 +21,19 @@ export const STYLE_ELEMENT_ID = "content-tabs-styles";
  *
  * Colours are stated explicitly rather than inherited. The strip renders
  * inside a host page whose own button styling (dark fill, own text colour)
- * otherwise wins on specificity and turns a tab into an unreadable block, and
- * `var(--man-red)` is not guaranteed to exist on every page. Every colour
- * therefore has a literal value here, exposed as a custom property on the
- * group so a page can still override it deliberately.
+ * would otherwise win on specificity, and `var(--man-red)` is not guaranteed
+ * to exist on every page. Every colour therefore has a literal value here,
+ * exposed as a custom property on the group so a page can still override it
+ * deliberately.
  *
- * The rules that fight host button CSS are written as
- * `.content-tabs-bar__list button.content-tabs-tab` to outweigh the usual
- * `.some-wrapper button` selectors.
- *
- * Background, colour and geometry additionally carry `!important`. The
- * Staffbase stylesheet styles every `button` as a full-width call-to-action
- * (`width: 90%`, `display: block`, `margin: auto`, brand background) and the
- * MAN theme raises its `:focus` background to `!important`, which is what
- * painted the selected tab as a dark block with invisible text. Specificity
- * alone cannot beat an `!important` declaration, so these few properties have
- * to be stated at the same weight.
+ * A tab is a plain `<div role="tab">`, not a `<button>` — deliberately. The
+ * MAN theme (`onetruck-css`) styles every bare `button` inside `.page` as a
+ * full-width, uppercase, red call-to-action (`.page button:not(...)`), which
+ * is meant for real CTAs elsewhere and has nothing to do with a tab strip.
+ * Fighting that rule from here would mean guessing its exact properties and
+ * repeating them with `!important`, which breaks again the moment that global
+ * rule changes. Not being a `<button>` sidesteps it entirely, so none of
+ * these declarations need `!important` to hold.
  *
  * The strip scrolls sideways rather than wrapping. On a narrow screen wrapped
  * tabs push the content down by an unpredictable amount, and the panel below
@@ -70,54 +67,47 @@ export const CONTENT_TABS_CSS = `
   margin-bottom: 30px;
 }
 
-.${BAR_CLASS}__list button.content-tabs-tab {
+.${BAR_CLASS}__list .content-tabs-tab {
   flex: 1 0 auto;
-  appearance: none;
-  -webkit-appearance: none;
-  background: var(--content-tabs-tab-bg) !important;
-  background-image: none !important;
-  border: 0 !important;
-  border-bottom: 2px solid transparent !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  color: var(--content-tabs-tab-color) !important;
+  background: var(--content-tabs-tab-bg);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--content-tabs-tab-color);
   cursor: pointer;
-  display: inline-block !important;
+  display: inline-block;
   font: inherit;
-  margin: 0 !important;
-  min-height: 0 !important;
+  margin: 0;
   opacity: 1;
-  padding: 8px 16px !important;
+  padding: 8px 16px;
   position: relative;
   text-shadow: none;
+  text-transform: none;
   white-space: nowrap;
-  width: auto !important;
+  width: auto;
 }
 
-.${BAR_CLASS}__list button.content-tabs-tab:hover,
-.${BAR_CLASS}__list button.content-tabs-tab:focus,
-.${BAR_CLASS}__list button.content-tabs-tab:active {
-  background: var(--content-tabs-tab-bg) !important;
-  background-image: none !important;
-  color: var(--content-tabs-tab-hover-color) !important;
-  border-bottom-color: var(--content-tabs-accent) !important;
+.${BAR_CLASS}__list .content-tabs-tab:hover,
+.${BAR_CLASS}__list .content-tabs-tab:focus,
+.${BAR_CLASS}__list .content-tabs-tab:active {
+  background: var(--content-tabs-tab-bg);
+  color: var(--content-tabs-tab-hover-color);
+  border-bottom-color: var(--content-tabs-accent);
 }
 
-.${BAR_CLASS}__list button.content-tabs-tab[aria-selected="true"] {
-  background: var(--content-tabs-tab-bg) !important;
-  background-image: none !important;
-  color: var(--content-tabs-tab-active-color) !important;
-  border-bottom-color: var(--content-tabs-accent) !important;
+.${BAR_CLASS}__list .content-tabs-tab[aria-selected="true"] {
+  background: var(--content-tabs-tab-bg);
+  color: var(--content-tabs-tab-active-color);
+  border-bottom-color: var(--content-tabs-accent);
   font-weight: 600;
 }
 
-/* The theme draws its own underline on tab-like buttons via ::after. */
-.${BAR_CLASS}__list button.content-tabs-tab::after,
-.${BAR_CLASS}__list button.content-tabs-tab::before {
-  content: none !important;
-}
-
-.${BAR_CLASS}__list button.content-tabs-tab:focus-visible {
+/* .page :focus-visible in the MAN theme sets its own outline colour with
+ * !important; this is a legitimate, unrelated global concern (consistent
+ * focus rings everywhere), not a button-reset fight, so it still has to be
+ * matched at the same weight here. */
+.${BAR_CLASS}__list .content-tabs-tab:focus-visible {
   outline: 2px solid var(--content-tabs-accent) !important;
   outline-offset: -2px;
 }

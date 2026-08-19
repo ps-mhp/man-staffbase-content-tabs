@@ -66,18 +66,27 @@ export function TabsBar({
       End: last,
     };
 
-    if (!(event.key in next)) return;
-    event.preventDefault();
-    onSelect(next[event.key]);
+    if (event.key in next) {
+      event.preventDefault();
+      onSelect(next[event.key]);
+      return;
+    }
+
+    // A plain `<div>` carries no built-in activation on its own, unlike a
+    // `<button>`, so Enter/Space have to be wired up by hand here to keep
+    // the tab keyboard-operable per the ARIA tabs pattern.
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onSelect(activeIndex);
+    }
   };
 
   return (
     <div className={`${BAR_CLASS}__list`} role="tablist" onKeyDown={onKeyDown}>
       {isValid && titles.map((title, index) => (
-        <button
+        <div
           key={tabIds[index]}
           id={tabIds[index]}
-          type="button"
           role="tab"
           className="content-tabs-tab"
           aria-selected={index === activeIndex}
@@ -86,7 +95,7 @@ export function TabsBar({
           onClick={() => onSelect(index)}
         >
           {tabLabel(title, index)}
-        </button>
+        </div>
       ))}
     </div>
   );
