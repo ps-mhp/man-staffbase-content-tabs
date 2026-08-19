@@ -1,0 +1,30 @@
+{
+  "title": "Pestañas de contenido",
+  "summary": "Agrupa las columnas contiguas de una sección en un grupo de pestañas.",
+  "icon": "🗂️",
+  "pages": [
+    {
+      "id": "overview",
+      "title": "Resumen",
+      "file": "overview.md"
+    },
+    {
+      "id": "settings",
+      "title": "Configuración",
+      "file": "settings.md"
+    },
+    {
+      "id": "faq",
+      "title": "Preguntas frecuentes",
+      "file": "faq.md"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Una pestaña",
+      "attributes": {
+        "tab-title": "Ankündigungen"
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "title": "Onglets de contenu",
+  "summary": "Regroupe les colonnes adjacentes d'une section en un groupe d'onglets.",
+  "icon": "🗂️",
+  "pages": [
+    {
+      "id": "overview",
+      "title": "Aperçu",
+      "file": "overview.md"
+    },
+    {
+      "id": "settings",
+      "title": "Paramètres",
+      "file": "settings.md"
+    },
+    {
+      "id": "faq",
+      "title": "FAQ",
+      "file": "faq.md"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Un onglet",
+      "attributes": {
+        "tab-title": "Ankündigungen"
+      }
+    }
+  ]
+}

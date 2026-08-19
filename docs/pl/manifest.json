@@ -1,0 +1,30 @@
+{
+  "title": "Zakładki z treścią",
+  "summary": "Łączy sąsiednie kolumny sekcji w grupę zakładek.",
+  "icon": "🗂️",
+  "pages": [
+    {
+      "id": "overview",
+      "title": "Przegląd",
+      "file": "overview.md"
+    },
+    {
+      "id": "settings",
+      "title": "Ustawienia",
+      "file": "settings.md"
+    },
+    {
+      "id": "faq",
+      "title": "Najczęściej zadawane pytania",
+      "file": "faq.md"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Jedna zakładka",
+      "attributes": {
+        "tab-title": "Ankündigungen"
+      }
+    }
+  ]
+}

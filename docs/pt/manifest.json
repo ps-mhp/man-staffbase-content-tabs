@@ -1,0 +1,30 @@
+{
+  "title": "Separadores de conteúdo",
+  "summary": "Agrupa as colunas adjacentes de uma secção num grupo de separadores.",
+  "icon": "🗂️",
+  "pages": [
+    {
+      "id": "overview",
+      "title": "Visão geral",
+      "file": "overview.md"
+    },
+    {
+      "id": "settings",
+      "title": "Definições",
+      "file": "settings.md"
+    },
+    {
+      "id": "faq",
+      "title": "Perguntas frequentes",
+      "file": "faq.md"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Uma aba",
+      "attributes": {
+        "tab-title": "Ankündigungen"
+      }
+    }
+  ]
+}

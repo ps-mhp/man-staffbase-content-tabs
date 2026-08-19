@@ -1,0 +1,30 @@
+{
+  "title": "Inhoudstabbladen",
+  "summary": "Voegt aangrenzende kolommen van een sectie samen tot een tabbladgroep.",
+  "icon": "🗂️",
+  "pages": [
+    {
+      "id": "overview",
+      "title": "Overzicht",
+      "file": "overview.md"
+    },
+    {
+      "id": "settings",
+      "title": "Instellingen",
+      "file": "settings.md"
+    },
+    {
+      "id": "faq",
+      "title": "Veelgestelde vragen",
+      "file": "faq.md"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Een tabblad",
+      "attributes": {
+        "tab-title": "Ankündigungen"
+      }
+    }
+  ]
+}

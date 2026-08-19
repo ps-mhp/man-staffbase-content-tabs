@@ -1,0 +1,30 @@
+{
+  "title": "Content Tabs",
+  "summary": "Combines adjacent columns in a section into a tab group.",
+  "icon": "🗂️",
+  "pages": [
+    {
+      "id": "overview",
+      "title": "Overview",
+      "file": "overview.md"
+    },
+    {
+      "id": "settings",
+      "title": "Settings",
+      "file": "settings.md"
+    },
+    {
+      "id": "faq",
+      "title": "FAQ",
+      "file": "faq.md"
+    }
+  ],
+  "examples": [
+    {
+      "title": "A tab",
+      "attributes": {
+        "tab-title": "Ankündigungen"
+      }
+    }
+  ]
+}
