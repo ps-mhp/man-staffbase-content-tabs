@@ -1,16 +1,29 @@
 {
   "title": "Content-Tabs",
   "summary": "Fasst benachbarte Spalten einer Section zu einer Tab-Gruppe zusammen.",
-  "icon": "🗂️",
   "pages": [
-    { "id": "overview", "title": "Übersicht", "file": "overview.md" },
-    { "id": "settings", "title": "Einstellungen", "file": "settings.md" },
-    { "id": "faq", "title": "FAQ", "file": "faq.md" }
+    {
+      "id": "overview",
+      "title": "Übersicht",
+      "file": "overview.md"
+    },
+    {
+      "id": "settings",
+      "title": "Einstellungen",
+      "file": "settings.md"
+    },
+    {
+      "id": "faq",
+      "title": "FAQ",
+      "file": "faq.md"
+    }
   ],
   "examples": [
     {
       "title": "Ein Tab",
-      "attributes": { "tab-title": "Ankündigungen" }
+      "attributes": {
+        "tab-title": "Ankündigungen"
+      }
     }
   ]
 }

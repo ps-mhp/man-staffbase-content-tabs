@@ -1,7 +1,6 @@
 {
   "title": "Onglets de contenu",
   "summary": "Regroupe les colonnes adjacentes d'une section en un groupe d'onglets.",
-  "icon": "🗂️",
   "pages": [
     {
       "id": "overview",

@@ -1,7 +1,6 @@
 {
   "title": "Zakładki z treścią",
   "summary": "Łączy sąsiednie kolumny sekcji w grupę zakładek.",
-  "icon": "🗂️",
   "pages": [
     {
       "id": "overview",

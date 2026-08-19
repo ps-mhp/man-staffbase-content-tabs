@@ -1,7 +1,6 @@
 {
   "title": "Pestañas de contenido",
   "summary": "Agrupa las columnas contiguas de una sección en un grupo de pestañas.",
-  "icon": "🗂️",
   "pages": [
     {
       "id": "overview",

@@ -1,7 +1,6 @@
 {
   "title": "Inhoudstabbladen",
   "summary": "Voegt aangrenzende kolommen van een sectie samen tot een tabbladgroep.",
-  "icon": "🗂️",
   "pages": [
     {
       "id": "overview",

@@ -1,7 +1,6 @@
 {
   "title": "Content Tabs",
   "summary": "Combines adjacent columns in a section into a tab group.",
-  "icon": "🗂️",
   "pages": [
     {
       "id": "overview",
