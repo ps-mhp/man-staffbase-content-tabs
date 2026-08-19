@@ -1,6 +1,6 @@
 {
   "title": "Inhoudstabbladen",
-  "summary": "Voegt aangrenzende kolommen van een sectie samen tot een tabbladgroep.",
+  "summary": "Voegt aangrenzende kolommen van een sectie samen tot een tabgroep.",
   "pages": [
     {
       "id": "overview",
@@ -20,10 +20,24 @@
   ],
   "examples": [
     {
-      "title": "Een tabblad",
+      "title": "Twee tabbladen",
       "attributes": {
         "tab-title": "Ankündigungen"
-      }
+      },
+      "members": [
+        {
+          "attributes": {
+            "tab-title": "Ankündigungen"
+          },
+          "content": "Inhalt der Spalte „Ankündigungen“."
+        },
+        {
+          "attributes": {
+            "tab-title": "Termine"
+          },
+          "content": "Inhalt der Spalte „Termine“."
+        }
+      ]
     }
   ]
 }

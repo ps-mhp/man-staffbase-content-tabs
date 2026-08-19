@@ -7,7 +7,7 @@ Answer: No, this is by design. The tab bar itself only appears on
 the published page; in the editor, each column remains visible and
 editable individually, marked only by the border and the title label.
 
-**Question:** Why were two column groups accidentally combined into one
+**Question:** Why were two column groups accidentally merged into one
 ?
 
 Answer: All adjacent columns with a Content Tabs block automatically form

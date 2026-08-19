@@ -1,13 +1,13 @@
 # Preguntas frecuentes
 
-**Pregunta:** No veo ninguna barra de pestañas en el editor, solo un
-marco punteado; ¿se trata de un error?
+**Pregunta:** No veo la barra de pestañas en el editor, solo un
+marco discontinuo; ¿se trata de un error?
 
-Respuesta: No, es a propósito. La barra de pestañas no aparece hasta
+Respuesta: No, es así a propósito. La barra de pestañas no aparece hasta
 que se publica la página; en el editor, cada columna sigue siendo visible y
-editable por separado, y solo se distingue por el marco y la etiqueta del título.
+editable por separado, y solo está marcada por el marco y la etiqueta del título.
 
-**Pregunta:** ¿Por qué se han agrupado por error dos grupos de columnas en uno
+**Pregunta:** ¿Por qué se han fusionado accidentalmente dos grupos de columnas en uno
 solo?
 
 Respuesta: Todas las columnas adyacentes con un bloque «Content-Tabs» forman

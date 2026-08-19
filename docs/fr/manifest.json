@@ -20,10 +20,24 @@
   ],
   "examples": [
     {
-      "title": "Un onglet",
+      "title": "Deux onglets",
       "attributes": {
         "tab-title": "Ankündigungen"
-      }
+      },
+      "members": [
+        {
+          "attributes": {
+            "tab-title": "Ankündigungen"
+          },
+          "content": "Inhalt der Spalte „Ankündigungen“."
+        },
+        {
+          "attributes": {
+            "tab-title": "Termine"
+          },
+          "content": "Inhalt der Spalte „Termine“."
+        }
+      ]
     }
   ]
 }

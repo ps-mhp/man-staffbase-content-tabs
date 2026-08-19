@@ -1,7 +1,7 @@
-# Perguntas frequentes
+# Perguntas Frequentes
 
 **Pergunta:** Não vejo nenhuma barra de separadores no editor, apenas uma moldura
-pontilhada — isto é um erro?
+traçada — isto é um erro?
 
 Resposta: Não, é assim mesmo. A barra de separadores só aparece na
 página publicada; no editor, cada coluna permanece visível e

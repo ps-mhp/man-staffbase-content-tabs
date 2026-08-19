@@ -11,8 +11,8 @@ można ją edytować osobno, oznaczona jedynie ramką i etykietą tytułową.
 ?
 
 Odpowiedź: Wszystkie sąsiadujące kolumny z blokiem zakładek treści tworzą
-automatycznie wspólną grupę. Aby rozdzielić dwie grupy, między nimi musi znajdować się
-co najmniej jedna kolumna **bez** bloku zakładek treści.
+automatycznie wspólną grupę. Aby rozdzielić dwie grupy, między nimi musi
+znajdować się co najmniej jedna kolumna **bez** bloku zakładek treści.
 
 **Pytanie:** Czy mogę później zmienić kolejność zakładek?
 

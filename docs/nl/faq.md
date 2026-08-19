@@ -1,7 +1,7 @@
 # Veelgestelde vragen
 
-**Vraag:** Ik zie in de editor geen tabbladbalk, alleen een gestreepte
-omlijsting — is dat een fout?
+**Vraag:** Ik zie in de editor geen tabbalk, alleen een gestreepte
+omranding — is dat een fout?
 
 Antwoord: Nee, dat is zo bedoeld. De tabbalk zelf verschijnt pas op
 de gepubliceerde pagina; in de editor blijft elke kolom afzonderlijk zichtbaar en
@@ -12,7 +12,7 @@ groep?
 
 Antwoord: Alle aangrenzende kolommen met een Content-Tabs-blok vormen
 automatisch een gezamenlijke groep. Om twee groepen te scheiden, moet
-er ten minste één kolom tussenin staan **zonder** Content-Tabs-blok.
+er ten minste één kolom **zonder** Content-Tabs-blok tussenin staan.
 
 **Vraag:** Kan ik de volgorde van de tabbladen achteraf wijzigen?
 

@@ -1,6 +1,6 @@
 {
-  "title": "Zakładki z treścią",
-  "summary": "Łączy sąsiednie kolumny sekcji w grupę zakładek.",
+  "title": "Zakładki treści",
+  "summary": "Łączy sąsiednie kolumny sekcji w jedną grupę zakładek.",
   "pages": [
     {
       "id": "overview",
@@ -20,10 +20,24 @@
   ],
   "examples": [
     {
-      "title": "Jedna zakładka",
+      "title": "Dwie zakładki",
       "attributes": {
         "tab-title": "Ankündigungen"
-      }
+      },
+      "members": [
+        {
+          "attributes": {
+            "tab-title": "Ankündigungen"
+          },
+          "content": "Inhalt der Spalte „Ankündigungen“."
+        },
+        {
+          "attributes": {
+            "tab-title": "Termine"
+          },
+          "content": "Inhalt der Spalte „Termine“."
+        }
+      ]
     }
   ]
 }

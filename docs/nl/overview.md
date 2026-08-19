@@ -1,7 +1,7 @@
 # Inhoudstabs
 
-Inhoudstabbladen bundelen aangrenzende kolommen van een sectie tot een tabbladgroep:
-elke kolom waarin een inhoudstabblad-blok wordt geplaatst, wordt
+Inhoudstabbladen voegen aangrenzende kolommen van een sectie samen tot een tabbladgroep:
+elke kolom waarin een inhoudstabbladblok wordt geplaatst, wordt
 een apart tabblad. Kolommen zonder dit blok blijven ongewijzigd en scheiden
 twee tabbladgroepen van elkaar.
 
@@ -11,6 +11,6 @@ productvarianten, taalversies naast elkaar of meerdere themablokken
 binnen een sectie.
 
 In de CMS-editor is geen tabbalk te zien. In plaats daarvan markeert een
-gestreepte kaderlijn de groep, met de betreffende tabtitel als label, zodat
+gestreept kader de groep, met de betreffende tabtitel als label, zodat
 elke kolom tijdens het bewerken afzonderlijk toegankelijk blijft. De
 eigenlijke tabbalk verschijnt pas op de gepubliceerde pagina.

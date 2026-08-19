@@ -3,16 +3,16 @@
 **Question :** Je ne vois pas de barre d'onglets dans l'éditeur, seulement un
 cadre en pointillés — s'agit-il d'une erreur ?
 
-Réponse : Non, c'est voulu. La barre d’onglets n’apparaît qu’une fois
+Réponse : Non, c'est normal. La barre d’onglets n’apparaît qu’une fois
 la page publiée ; dans l’éditeur, chaque colonne reste visible et
-modifiable individuellement, identifiée uniquement par son cadre et son libellé.
+modifiable individuellement, délimitée uniquement par le cadre et le libellé de titre.
 
-**Question :** Pourquoi deux groupes de colonnes ont-ils été fusionnés par erreur en un seul
-?
+**Question :** Pourquoi deux groupes de colonnes ont-ils été fusionnés par erreur en un
+seul ?
 
 Réponse : Toutes les colonnes adjacentes comportant un bloc « Content Tabs » forment
 automatiquement un groupe commun. Pour séparer deux groupes, il faut
-qu'au moins une colonne **sans** bloc « Content Tabs » se trouve entre les deux.
+qu’au moins une colonne **sans** bloc « Content Tabs » se trouve entre les deux.
 
 **Question :** Puis-je modifier l'ordre des onglets a posteriori ?
 

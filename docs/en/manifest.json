@@ -20,10 +20,24 @@
   ],
   "examples": [
     {
-      "title": "A tab",
+      "title": "Two tabs",
       "attributes": {
         "tab-title": "Ankündigungen"
-      }
+      },
+      "members": [
+        {
+          "attributes": {
+            "tab-title": "Ankündigungen"
+          },
+          "content": "Inhalt der Spalte „Ankündigungen“."
+        },
+        {
+          "attributes": {
+            "tab-title": "Termine"
+          },
+          "content": "Inhalt der Spalte „Termine“."
+        }
+      ]
     }
   ]
 }

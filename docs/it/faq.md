@@ -1,9 +1,9 @@
-# Domande frequenti
+# FAQ
 
 **Domanda:** Nell’editor non vedo la barra delle schede, ma solo un
 bordino tratteggiato — si tratta di un errore?
 
-Risposta: No, è voluto. La barra delle schede compare solo sulla
+Risposta: No, è così che deve essere. La barra delle schede compare solo sulla
 pagina pubblicata; nell’editor ogni colonna rimane visibile e
 modificabile singolarmente, contrassegnata solo dal bordo e dall’etichetta del titolo.
 

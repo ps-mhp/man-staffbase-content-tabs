@@ -7,7 +7,7 @@ od siebie dwie grupy zakładek.
 
 Widżet ten nadaje się do umieszczenia wielu treści w tym samym miejscu,
 bez konieczności przewijania strony przez czytelników — na przykład
-warianty produktów, wersje językowe obok siebie lub kilka bloków tematycznych
+wariantów produktów, wersji językowych obok siebie lub kilku bloków tematycznych
 w ramach jednej sekcji.
 
 W edytorze CMS pasek zakładek nie jest widoczny. Zamiast tego grupę zaznacza
