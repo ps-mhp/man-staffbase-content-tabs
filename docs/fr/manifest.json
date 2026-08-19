@@ -1,11 +1,16 @@
 {
   "title": "Onglets de contenu",
-  "summary": "Regroupe les colonnes adjacentes d'une section en un groupe d'onglets.",
+  "summary": "Transforme les colonnes adjacentes d'une section en une barre d'onglets : une colonne = un onglet.",
   "pages": [
     {
       "id": "overview",
       "title": "Aperçu",
       "file": "overview.md"
+    },
+    {
+      "id": "usage",
+      "title": "Étape par étape",
+      "file": "usage.md"
     },
     {
       "id": "settings",

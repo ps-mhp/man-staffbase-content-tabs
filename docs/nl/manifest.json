@@ -1,11 +1,16 @@
 {
   "title": "Inhoudstabbladen",
-  "summary": "Voegt aangrenzende kolommen van een sectie samen tot een tabgroep.",
+  "summary": "Maakt van naast elkaar liggende kolommen van een sectie een tabbladbalk: één kolom = één tabblad.",
   "pages": [
     {
       "id": "overview",
       "title": "Overzicht",
       "file": "overview.md"
+    },
+    {
+      "id": "usage",
+      "title": "Stap voor stap",
+      "file": "usage.md"
     },
     {
       "id": "settings",

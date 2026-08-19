@@ -1,11 +1,16 @@
 {
   "title": "Pestañas de contenido",
-  "summary": "Agrupa las columnas contiguas de una sección en un grupo de pestañas.",
+  "summary": "Convierte las columnas contiguas de una sección en una barra de pestañas: una columna = una pestaña.",
   "pages": [
     {
       "id": "overview",
       "title": "Resumen",
       "file": "overview.md"
+    },
+    {
+      "id": "usage",
+      "title": "Paso a paso",
+      "file": "usage.md"
     },
     {
       "id": "settings",

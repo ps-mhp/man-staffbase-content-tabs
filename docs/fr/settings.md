@@ -2,14 +2,24 @@
 
 | Paramètre | Description |
 | --- | --- |
-| Titre de l'onglet | Le libellé sous lequel la colonne apparaît en tant qu'onglet. Champ obligatoire — sans titre, l'onglet reste sans libellé dans l'éditeur. |
+| Titre de l'onglet | Le libellé sous lequel cette colonne apparaît en tant qu'onglet. |
 
-Il s’agit du seul paramètre du widget. Le regroupement des onglets
-résulte automatiquement de la disposition des colonnes :
+C'est le seul paramètre. Tout le reste dépend de la disposition
+des colonnes.
 
-1. Placez un bloc « Content Tabs » dans chaque colonne devant devenir un onglet et
-   attribuez-lui un nom via « Titre de l’onglet ».
-2. Les colonnes adjacentes contenant un bloc forment automatiquement un groupe — il suffit qu’elles
-   soient côte à côte.
-3. Une colonne **sans** bloc clôt le groupe ; cette colonne reste
-   inchangée.
+## Remarques concernant le titre
+
+- **Restez concis.** Les libellés s'affichent les uns à côté des autres sur une seule ligne ;
+  les titres trop longs font disparaître les autres onglets de la zone visible.
+- **Si vous laissez le champ vide**, `Onglet 1`, `Onglet 2`, etc. s'affichent à la place sur la page.
+  Dans l'éditeur, la mention `Onglet : pas encore de titre` apparaît alors dans le cadre. Ce n'est pas une erreur,
+  mais cela en a l'air pour les lectrices et lecteurs — veillez donc à toujours définir un titre.
+- Le titre est pris en compte par la **traduction automatique** de la page et
+  apparaît dans la langue des lectrices et lecteurs. Si une traduction est vide,
+  le titre d’origine s’affiche.
+
+## Ce que vous ne pouvez pas configurer
+
+Le nombre, l'ordre et le regroupement des onglets ne sont pas des paramètres,
+mais dépendent de la disposition des colonnes (voir « Étape par étape »). L'apparence,
+les couleurs et la position de la barre d'onglets sont prédéfinies.

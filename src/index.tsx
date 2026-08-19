@@ -12,6 +12,7 @@
  */
 
 import { setPublicPathFromBundle } from "@shared/public-path";
+import { startWidget } from "@shared/dev-mode/start-widget";
 import { getTranslationRegistry } from "@shared/translation/registry";
 import { contentTabsTranslationProvider } from "./translation-provider";
 
@@ -160,10 +161,21 @@ export const stopTranslationProvider = getTranslationRegistry().register(
 );
 
 // The guard lets the module load in Jest/jsdom where defineBlock is absent,
-// while keeping both calls unconditional in the real Staffbase host, where it
-// is always present — on the editor and on a published page alike. The
-// bootstrap is tied to it because it only has work to do where blocks exist.
+// while keeping the call unconditional in the real Staffbase host, where it is
+// always present — on the editor and on a published page alike.
+//
+// Registration now runs through `startWidget`, which first asks whether a
+// local development server serves this widget. On virtually every browser the
+// answer is no and this registers immediately; on the developer's machine the
+// local bundle takes over and registers instead. Only ever one of the two, a
+// block name cannot be claimed twice.
 if (typeof window.defineBlock === "function") {
-  window.defineBlock(externalBlockDefinition);
-  startContentTabs();
+  void startWidget({
+    name: "content-tabs",
+    version: pkg.version,
+    register: () => {
+      window.defineBlock(externalBlockDefinition);
+      startContentTabs();
+    },
+  });
 }

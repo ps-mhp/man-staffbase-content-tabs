@@ -1,11 +1,16 @@
 {
   "title": "Schede dei contenuti",
-  "summary": "Raggruppa le colonne adiacenti di una sezione in un gruppo di schede.",
+  "summary": "Trasforma le colonne adiacenti di una sezione in una barra delle schede: una colonna = una scheda.",
   "pages": [
     {
       "id": "overview",
       "title": "Panoramica",
       "file": "overview.md"
+    },
+    {
+      "id": "usage",
+      "title": "Passo dopo passo",
+      "file": "usage.md"
     },
     {
       "id": "settings",

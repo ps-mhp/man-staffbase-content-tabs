@@ -1,0 +1,145 @@
+// Copyright 2026, MHP Management und IT-Beratung GmbH and contributors.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//     http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Colours come from `man(...)` (see `@shared/stylings/_man-tokens.scss`),
+// exposed as custom properties on the group so a page can still override
+// them deliberately. `man(...)` itself compiles to `var(--man-x, <fallback>)`,
+// so the fallback still works when a host page doesn't have the MAN theme
+// loaded at all (preview, a different tenant, …) — nothing here assumes
+// `onetruck-css` is present.
+//
+// A tab is a plain `<div role="tab">`, not a `<button>` — deliberately. The
+// MAN theme (`onetruck-css`) styles every bare `button` inside `.page` as a
+// full-width, uppercase, red call-to-action (`.page button:not(...)`), which
+// is meant for real CTAs elsewhere and has nothing to do with a tab strip.
+// Fighting that rule from here would mean guessing its exact properties and
+// repeating them with `!important`, which breaks again the moment that global
+// rule changes. Not being a `<button>` sidesteps it entirely, so none of
+// these declarations need `!important` to hold.
+//
+// The strip scrolls sideways rather than wrapping. On a narrow screen wrapped
+// tabs push the content down by an unpredictable amount, and the panel below
+// then jumps as the author switches tabs.
+//
+// The class names below (`.content-tabs-group`, `.content-tabs-bar`) are
+// literal copies of `GROUP_CLASS`/`BAR_CLASS` from `../tabs-transform`. A
+// `.scss` file cannot import a TypeScript constant, so keep both in sync by
+// hand if either one changes — `styles.test.ts` only checks that the
+// compiled stylesheet still contains `.content-tabs-group`.
+
+@use "@shared/stylings/man-tokens" as *;
+
+.content-tabs-group,
+.content-tabs-bar,
+.content-tabs-bar__list {
+  // `man("red")` ist zufällig exakt der bisherige Literal-Wert (#e40045) —
+  // kein Zufall, beides ist MAN-Rot, aber jetzt aus einer Quelle statt
+  // zweimal getippt. Die übrigen drei Farben haben keine 1:1-Entsprechung
+  // in der Palette (sie wurden unabhängig von den Tokens gewählt); die
+  // nächstliegenden Semantik-Tokens (`text`, `text-muted`, `border`) passen
+  // aber genauso gut zur Rolle (aktiv/hover = dunkelster Text, inaktiv =
+  // gedämpfter Text, Streifen-Trennlinie = Standard-Rahmenfarbe) und lösen
+  // sich mit dem Theme mit auf, statt für sich zu stehen.
+  // Sass wertet Ausdrücke in Custom-Property-Werten (`--x: ...;`) nicht
+  // automatisch aus — nur `#{...}`-Interpolation tut das. Ohne sie stünde
+  // hier wörtlich `man("red")` statt `var(--man-red, #e40045)` im Output.
+  --content-tabs-accent: #{man("red")};
+  --content-tabs-tab-bg: transparent;
+  --content-tabs-tab-color: #{man("text-muted")};
+  --content-tabs-tab-hover-color: #{man("text")};
+  --content-tabs-tab-active-color: #{man("text")};
+  --content-tabs-strip-border: #{man("border")};
+}
+
+.content-tabs-group {
+  box-sizing: border-box;
+  display: block;
+  min-width: 0;
+}
+
+.content-tabs-bar__list {
+  display: flex;
+  gap: man("space-1");
+  overflow-x: auto;
+  scrollbar-width: thin;
+  background: transparent;
+  border-bottom: man("border-width") solid var(--content-tabs-strip-border);
+  // 30px trifft keinen Abstand aus der Space-Skala (24px/32px) — bewusst
+  // Layout-Entscheidung dieses Widgets, kein Marken-Token, deshalb Literal.
+  margin-bottom: 30px;
+
+  .content-tabs-tab {
+    background: var(--content-tabs-tab-bg);
+    border: 0;
+    border-bottom: man("border-width-strong") solid transparent;
+    border-radius: man("radius");
+    box-shadow: none;
+    color: var(--content-tabs-tab-color);
+    cursor: pointer;
+    display: inline-block;
+    font: inherit;
+    margin: 0;
+    opacity: 1;
+    padding: man("space-2") man("space-4");
+    position: relative;
+    @include man-type("h4");
+    white-space: nowrap;
+    width: auto;
+
+    &:hover,
+    &:focus,
+    &:active {
+      background: var(--content-tabs-tab-bg);
+      color: var(--content-tabs-tab-hover-color);
+      border-bottom-color: var(--content-tabs-accent);
+    }
+
+    &[aria-selected="true"] {
+      background: var(--content-tabs-tab-bg);
+      color: var(--content-tabs-tab-active-color);
+      border-bottom-color: var(--content-tabs-accent);
+      font-weight: 600;
+    }
+
+    // `.page :focus-visible` in the MAN theme sets its own outline colour
+    // with `!important`; this is a legitimate, unrelated global concern
+    // (consistent focus rings everywhere), not a button-reset fight, so it
+    // still has to be matched at the same weight here.
+    &:focus-visible {
+      outline: 2px solid var(--content-tabs-accent) !important;
+      outline-offset: -2px;
+    }
+  }
+}
+
+// Editor only: one frame drawn across the columns of a group.
+.content-tabs-group-start,
+.content-tabs-group-middle,
+.content-tabs-group-end {
+  border-top: 2px dashed rgba(0, 0, 0, 0.3);
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.3);
+}
+
+.content-tabs-group-start {
+  border-left: 2px dashed rgba(0, 0, 0, 0.3);
+}
+
+.content-tabs-group-end {
+  border-right: 2px dashed rgba(0, 0, 0, 0.3);
+}
+
+.content-tabs-editor-label {
+  display: inline-block;
+  color: man("text-muted");
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 0;
+}

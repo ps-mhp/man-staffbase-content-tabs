@@ -1,16 +1,34 @@
 # Schede di contenuto
 
-Le schede di contenuto raggruppano le colonne adiacenti di una sezione in un gruppo di schede:
-ogni colonna in cui viene inserito un blocco "Schede di contenuto" diventa
-una scheda a sé stante. Le colonne prive di questo blocco rimangono invariate e separano
-due gruppi di schede l'uno dall'altro.
+Con le schede di contenuto è possibile disporre più contenuti uno sopra l’altro anziché uno sotto l’altro:
+sulla pagina pubblicata compare una barra delle schede e i lettori
+possono passare da un contenuto all’altro con un clic. Ciò consente di risparmiare spazio — ad esempio per
+varianti di prodotto, sedi, reparti o diversi blocchi tematici che altrimenti
+creerebbero una pagina molto lunga.
 
-Il widget è ideale per ospitare più contenuti nello stesso spazio,
-senza che i lettori debbano scorrere la pagina verso il basso — ad esempio
-varianti di prodotto, versioni linguistiche affiancate o più blocchi tematici
-all’interno di una sezione.
+## L’essenziale in una frase
 
-Nell’editor CMS non è visibile alcuna barra delle schede. Al suo posto, un
-bordino tratteggiato evidenzia il gruppo, con il rispettivo titolo della scheda come etichetta, in modo che
-ogni colonna rimanga accessibile singolarmente durante la modifica. La
-barra delle schede vera e propria appare solo sulla pagina pubblicata.
+**Una scheda = una colonna.** In una sezione (Section) si creano più
+colonne una accanto all’altra, inserite in ogni colonna un widget «Content Tabs» e
+riempite la colonna sottostante con il contenuto che deve apparire in quella scheda.
+
+Il widget di per sé non visualizza nulla. Serve solo a indicare che «questa colonna
+è una scheda» e fornisce l’etichetta corrispondente.
+
+## Cosa vedono i lettori
+
+Una barra delle schede sopra il contenuto. La prima scheda è sempre
+attiva all’apertura della pagina. Cliccando su un’etichetta viene visualizzato il contenuto della relativa
+colonna; le altre colonne sono nascoste. Sugli schermi stretti
+la barra rimane su una sola riga e può essere spostata lateralmente.
+
+La selezione non viene salvata: dopo aver ricaricato la pagina,
+la prima scheda è nuovamente attiva.
+
+## Cosa vedete nell’editor CMS
+
+**Nessuna barra delle schede.** Durante la modifica, tutte le colonne rimangono affiancate
+in modo da poter accedere direttamente al contenuto di ciascuna scheda. Le colonne correlate
+sono contrassegnate solo da un bordo tratteggiato e da un’etichetta con il
+titolo della scheda. La barra delle schede vera e propria appare solo nell’anteprima
+e sulla pagina pubblicata.

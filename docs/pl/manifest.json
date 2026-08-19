@@ -1,11 +1,16 @@
 {
-  "title": "Zakładki treści",
-  "summary": "Łączy sąsiednie kolumny sekcji w jedną grupę zakładek.",
+  "title": "Zakładki z treścią",
+  "summary": "Łączy sąsiadujące kolumny w sekcji w pasek zakładek: jedna kolumna = jedna zakładka.",
   "pages": [
     {
       "id": "overview",
       "title": "Przegląd",
       "file": "overview.md"
+    },
+    {
+      "id": "usage",
+      "title": "Krok po kroku",
+      "file": "usage.md"
     },
     {
       "id": "settings",

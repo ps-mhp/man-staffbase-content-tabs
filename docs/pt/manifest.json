@@ -1,11 +1,16 @@
 {
   "title": "Separadores de conteúdo",
-  "summary": "Agrupa as colunas adjacentes de uma secção num grupo de separadores.",
+  "summary": "Transforma as colunas adjacentes de uma secção numa barra de separadores: uma coluna = um separador.",
   "pages": [
     {
       "id": "overview",
       "title": "Visão geral",
       "file": "overview.md"
+    },
+    {
+      "id": "usage",
+      "title": "Passo a passo",
+      "file": "usage.md"
     },
     {
       "id": "settings",
@@ -14,7 +19,7 @@
     },
     {
       "id": "faq",
-      "title": "Perguntas frequentes",
+      "title": "Perguntas Frequentes",
       "file": "faq.md"
     }
   ],

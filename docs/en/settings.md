@@ -2,14 +2,24 @@
 
 | Setting | Description |
 | --- | --- |
-| Tab Title | The label under which the column appears as a tab. Required field — without a title, the tab will remain unlabeled in the editor. |
+| Tab Title | The label under which this column appears as a tab. |
 
-This is the widget’s only setting. The tab grouping itself
-is determined automatically by the arrangement of the columns:
+This is the only setting. Everything else is determined by the arrangement
+of the columns.
 
-1. Place a Content Tabs block in each column that is to become a tab and
-   give it a name using “Tab Title.”
-2. Adjacent columns containing a block automatically form a group—they simply need to
-   be next to each other.
-3. A column **without** a block ends the group; this column itself remains
-   unchanged.
+## Notes on the Title
+
+- **Keep it short.** The labels appear side by side on a single line;
+  long titles push the other tabs out of the visible area.
+- **If left blank**, the page will display `Tab 1`, `Tab 2`, etc., instead.
+  In the editor, the label will then read `Tab: no title yet`. This isn’t an error,
+  but it looks like one to readers—so always set a title.
+- The title is captured by the page’s **automatic translation** and
+  appears to readers in their language. If a translation is left blank,
+  the original title is displayed.
+
+## What You Cannot Configure
+
+The number, order, and grouping of the tabs are not configurable;
+instead, they follow the column layout (see “Step by Step”). The appearance,
+colors, and position of the tab bar are fixed.
