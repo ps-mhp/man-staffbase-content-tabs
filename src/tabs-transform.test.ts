@@ -337,3 +337,98 @@ describe("transformGroup", () => {
     expect(group.members[0].column.hidden).toBe(true);
   });
 });
+
+/**
+ * The Content Designer's row: a `container-block` grid with `column-block`
+ * children. There the columns must stay put — moving one detaches the
+ * designer's `sb-custom-block` inside it, which does not recreate its widget
+ * when attached again (seen live on 29.09.2026: the tabs' own blocks vanished
+ * and the group fell apart).
+ */
+const buildDesigner = (count: number, memberIndexes: readonly number[], tracks = count): TabGroup => {
+  const section = document.createElement("div");
+  section.dataset.c13yComponent = "container-block";
+  section.style.display = "grid";
+  section.style.gridTemplateColumns = Array.from({ length: tracks }, () => "100px").join(" ");
+  const columns = Array.from({ length: count }, (_, index) => {
+    const column = document.createElement("div");
+    column.dataset.c13yComponent = "column-block";
+    column.dataset.index = String(index);
+    const region = document.createElement("div");
+    region.dataset.c13yRegion = "custom-block";
+    region.appendChild(document.createElement("content-tabs"));
+    column.appendChild(region);
+    section.appendChild(column);
+    return column;
+  });
+  document.body.appendChild(section);
+  return {
+    section,
+    members: memberIndexes.map((index) => ({
+      column: columns[index],
+      widget: columns[index].querySelector<HTMLElement>("content-tabs")!,
+    })),
+    width: { kind: "grid", span: memberIndexes.length },
+  };
+};
+
+describe("transformGroup in the Content Designer", () => {
+  it("leaves every column where it was", () => {
+    const group = buildDesigner(3, [1, 2]);
+    const before = Array.from(group.section.querySelectorAll("[data-c13y-component=column-block]"));
+
+    const mounted = transformGroup(group)!;
+
+    const after = Array.from(group.section.querySelectorAll("[data-c13y-component=column-block]"));
+    expect(after).toEqual(before);
+    after.forEach((column) => expect(column.parentElement).toBe(group.section));
+    expect(mounted.container.nextElementSibling).toBe(group.members[0].column);
+  });
+
+  it("places the bar above the panels, on the tracks the group occupied", () => {
+    const group = buildDesigner(3, [1, 2]);
+    const mounted = transformGroup(group)!;
+
+    expect(mounted.container.style.getPropertyValue("grid-column")).toBe("2 / span 2");
+    expect(mounted.container.style.getPropertyValue("grid-row")).toBe("1");
+    group.members.forEach(({ column }) => {
+      expect(column.style.getPropertyValue("grid-column")).toBe("2 / span 2");
+      expect(column.style.getPropertyValue("grid-row")).toBe("2");
+    });
+    const plain = group.section.querySelector<HTMLElement>('[data-index="0"]')!;
+    expect(plain.style.getPropertyValue("grid-row")).toBe("1 / span 2");
+  });
+
+  it("lets a single-track grid stack in document order", () => {
+    const group = buildDesigner(2, [0, 1], 1);
+    const mounted = transformGroup(group)!;
+
+    expect(mounted.container.style.getPropertyValue("grid-column")).toBe("");
+    expect(group.members[0].column.style.getPropertyValue("grid-row")).toBe("");
+  });
+
+  it("hides the block's wrapper and shows one panel at a time", () => {
+    const group = buildDesigner(2, [0, 1]);
+    const mounted = transformGroup(group)!;
+
+    const region = group.members[0].column.querySelector<HTMLElement>("[data-c13y-region]")!;
+    expect(region.style.getPropertyValue("display")).toBe("none");
+    expect(group.members[1].column.hidden).toBe(true);
+    mounted.setActive(1);
+    expect(group.members[0].column.hidden).toBe(true);
+    expect(group.members[1].column.hidden).toBe(false);
+  });
+
+  it("reverts to the untouched row", () => {
+    const group = buildDesigner(3, [1, 2]);
+    const mounted = transformGroup(group)!;
+
+    mounted.revert();
+
+    expect(group.section.querySelector(`.${GROUP_CLASS}`)).toBeNull();
+    group.section.querySelectorAll<HTMLElement>("[data-c13y-component=column-block]").forEach((column) => {
+      expect(column.getAttribute("style")).toBeNull();
+      expect(column.hidden).toBe(false);
+    });
+  });
+});

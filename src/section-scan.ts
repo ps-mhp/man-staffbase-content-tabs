@@ -24,11 +24,18 @@
  * every Staffbase build and must never be relied on.
  */
 
-/** The section a `<content-tabs>` block belongs to. */
-export const SECTION_SELECTOR = ".ui-commons__section__wrapper";
+/**
+ * The section a `<content-tabs>` block belongs to.
+ *
+ * The second alternative is the Content Designer's row: a `container-block`
+ * grid whose columns are `column-block` children, rendered inside the page's
+ * shadow root (seen live on 29.09.2026). Its `data-c13y-*` attributes are the
+ * designer's own stable hooks; the Tailwind classes next to them are not.
+ */
+export const SECTION_SELECTOR = '.ui-commons__section__wrapper, [data-c13y-component="container-block"]';
 
 /** One column of a section. Columns are direct children of the section. */
-export const COLUMN_SELECTOR = ".ui-commons__section__column";
+export const COLUMN_SELECTOR = '.ui-commons__section__column, [data-c13y-component="column-block"]';
 
 /** Declared width share, e.g. `column-33`. */
 const WIDTH_CLASS = /(?:^|\s)column-(\d+(?:\.\d+)?)(?:\s|$)/;

@@ -295,3 +295,106 @@ describe("startContentTabs", () => {
     expect(document.body.innerHTML).toBe(before);
   });
 });
+
+/**
+ * The Content Designer's markup, as seen live on 29.09.2026: the page body sits
+ * in one open shadow root, a row is a `container-block` grid and each column a
+ * `column-block` child. The block itself is wrapped twice — `sb-custom-block`
+ * inside a `custom-block` region that carries margin and shadow.
+ */
+const buildDesignerSection = (
+  columnCount: number,
+): { shadow: ShadowRoot; section: HTMLElement; columns: HTMLElement[] } => {
+  const host = document.body.appendChild(document.createElement("div"));
+  const shadow = host.attachShadow({ mode: "open" });
+  const section = document.createElement("div");
+  section.dataset.c13yComponent = "container-block";
+  const columns = Array.from({ length: columnCount }, (_, index) => {
+    const column = document.createElement("div");
+    column.dataset.c13yComponent = "column-block";
+    const text = document.createElement("p");
+    text.textContent = `Inhalt ${index + 1}`;
+    column.appendChild(text);
+    section.appendChild(column);
+    return column;
+  });
+  shadow.appendChild(section);
+  return { shadow, section, columns };
+};
+
+const addDesignerWidget = (column: HTMLElement, title: string): { widget: HTMLElement; region: HTMLElement } => {
+  const region = document.createElement("div");
+  region.dataset.c13yRegion = "custom-block";
+  const wrapper = document.createElement("sb-custom-block");
+  const widget = document.createElement("content-tabs");
+  wrapper.appendChild(widget);
+  region.appendChild(wrapper);
+  column.insertBefore(region, column.firstChild);
+  registerTab(widget, title);
+  return { widget, region };
+};
+
+describe("runContentTabs in the Content Designer", () => {
+  it("turns adjacent column-blocks into tabs inside the shadow root", async () => {
+    const { shadow, section, columns } = buildDesignerSection(2);
+    addDesignerWidget(columns[0], "Eins");
+    addDesignerWidget(columns[1], "Zwei");
+    await flush();
+
+    const stop = runContentTabs();
+    await flush();
+
+    const group = section.querySelector(`.${GROUP_CLASS}`);
+    expect(group).not.toBeNull();
+    expect(shadow.querySelectorAll('[role="tab"]')).toHaveLength(2);
+    expect(columns[1].hidden).toBe(true);
+    stop();
+  });
+
+  it("brings its stylesheet into the shadow root", async () => {
+    const { shadow, columns } = buildDesignerSection(2);
+    addDesignerWidget(columns[0], "Eins");
+    addDesignerWidget(columns[1], "Zwei");
+    await flush();
+
+    const stop = runContentTabs();
+    await flush();
+
+    expect(shadow.getElementById("content-tabs-styles")).not.toBeNull();
+    stop();
+  });
+
+  it("hides the block's whole wrapper, not only the element", async () => {
+    // The wrapper carries margin and shadow: hiding the element alone left an
+    // empty framed box above each panel.
+    const { columns } = buildDesignerSection(2);
+    const { region } = addDesignerWidget(columns[0], "Eins");
+    addDesignerWidget(columns[1], "Zwei");
+    await flush();
+
+    const stop = runContentTabs();
+    await flush();
+
+    expect(region.style.getPropertyValue("display")).toBe("none");
+    stop();
+    expect(region.style.getPropertyValue("display")).toBe("");
+  });
+
+  it("rebuilds when the host re-renders inside the shadow root", async () => {
+    const { section, columns } = buildDesignerSection(2);
+    addDesignerWidget(columns[0], "Eins");
+    addDesignerWidget(columns[1], "Zwei");
+    await flush();
+
+    const stop = runContentTabs();
+    await flush();
+
+    // The host throws our container away, as a re-render would.
+    section.querySelector(`.${GROUP_CLASS}`)!.remove();
+    columns.forEach((column) => section.appendChild(column));
+    await flush();
+
+    expect(section.querySelector(`.${GROUP_CLASS}`)).not.toBeNull();
+    stop();
+  });
+});

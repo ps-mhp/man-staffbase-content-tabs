@@ -91,6 +91,10 @@ interface Mount {
 const mountGroup = (group: TabGroup): Mount | null => {
   const mounted = transformGroup(group);
   if (mounted === null) return null;
+  // Next to the section, not in the document: in the Content Designer the
+  // section sits in a shadow root the head's stylesheets do not reach.
+  ensureStyles(group.section);
+  const root = group.section.getRootNode() as Document | ShadowRoot;
 
   const key = group.members[0].widget;
   const prefix = `content-tabs-${(nextId += 1)}`;
@@ -107,14 +111,14 @@ const mountGroup = (group: TabGroup): Mount | null => {
     column.setAttribute("aria-labelledby", tabIds[index]);
   });
 
-  const root = ReactDOM.createRoot(mounted.bar);
+  const reactRoot = ReactDOM.createRoot(mounted.bar);
   const start = Math.min(chosen.get(key) ?? 0, group.members.length - 1);
 
   const draw = (activeIndex: number): void => {
     chosen.set(key, activeIndex);
     mounted.setActive(activeIndex);
     flushSync(() => {
-      root.render(
+      reactRoot.render(
         <TabsBar
           titles={group.members.map(({ widget }) => titleOf(widget))}
           activeIndex={activeIndex}
@@ -124,7 +128,7 @@ const mountGroup = (group: TabGroup): Mount | null => {
             draw(index);
             // The strip is a single tab stop, so the newly selected tab has to
             // take the focus with it — otherwise keyboard users lose their place.
-            queueMicrotask(() => document.getElementById(tabIds[index])?.focus());
+            queueMicrotask(() => root.getElementById(tabIds[index])?.focus());
           }}
         />,
       );
@@ -140,7 +144,7 @@ const mountGroup = (group: TabGroup): Mount | null => {
     dispose: (): void => {
       // React must let go of the bar before the bar is removed along with the
       // container, or it unmounts into a node that is no longer there.
-      flushSync(() => root.unmount());
+      flushSync(() => reactRoot.unmount());
       group.members.forEach(({ column }, index) => {
         column.removeAttribute("role");
         column.removeAttribute("aria-labelledby");
@@ -167,7 +171,7 @@ const mountGroup = (group: TabGroup): Mount | null => {
  * @returns a function that undoes everything and stops watching.
  */
 export function runContentTabs(): () => void {
-  ensureStyles();
+  ensureStyles(document.body);
   const editor = isEditorContext();
   let mounts: Mount[] = [];
   let unmark: (() => void) | null = null;
@@ -205,21 +209,36 @@ export function runContentTabs(): () => void {
   // The registry signals changes too, and a pass started from there would
   // rewrite the page outside the observer's guarded window and immediately
   // trigger itself. Routing every pass through `ignoring` closes that loop.
-  let watch: DocumentWatch | null = null;
+  //
+  // One watch per root: the Content Designer renders the page into a shadow
+  // root, and a document observer sees nothing that happens inside it — a
+  // re-render there would throw the tabs away unnoticed. Each root a block
+  // turns up in gets its own watch, and every pass is shielded from all of
+  // them.
+  const watches = new Map<Node, DocumentWatch>();
   const guarded = (): void => {
-    if (watch === null) sync();
-    else watch.ignoring(sync);
+    const all = [...watches.values()];
+    const run = all.reduceRight<() => void>((work, watch) => () => watch.ignoring(work), syncAndWatchRoots);
+    run();
   };
+
+  function syncAndWatchRoots(): void {
+    sync();
+    for (const widget of registeredTabs()) {
+      const root = widget.getRootNode();
+      if (root instanceof ShadowRoot && !watches.has(root)) watches.set(root, observeDocument(guarded, root));
+    }
+  }
 
   guarded();
 
   const stopWatchingTabs = onTabsChanged(guarded);
-  watch = observeDocument(sync);
+  watches.set(document, observeDocument(guarded));
 
   return (): void => {
     stopWatchingTabs();
-    watch?.stop();
-    watch = null;
+    watches.forEach((watch) => watch.stop());
+    watches.clear();
     teardown();
   };
 }

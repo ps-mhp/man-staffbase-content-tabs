@@ -11,6 +11,8 @@
  * limitations under the License.
  */
 
+import { ensureStyleElement } from "@shared/style-root";
+
 import styles from "./styles/content-tabs.scss";
 
 /** Id of the single style element, which is also how it is recognised again. */
@@ -25,15 +27,13 @@ export const STYLE_ELEMENT_ID = "content-tabs-styles";
 export const CONTENT_TABS_CSS = styles;
 
 /**
- * Makes sure the stylesheet is on the page, exactly once.
+ * Makes sure the stylesheet is where `anchor` lives, exactly once per root.
  *
  * Several bundles may load and each will ask; the id is what keeps that from
- * piling up duplicates.
+ * piling up duplicates. In the Content Designer the tabs live in the page's
+ * shadow root, where a stylesheet in `document.head` does not apply — see
+ * `@shared/style-root`.
  */
-export function ensureStyles(doc: Document = document): void {
-  if (doc.getElementById(STYLE_ELEMENT_ID) !== null) return;
-  const style = doc.createElement("style");
-  style.id = STYLE_ELEMENT_ID;
-  style.textContent = CONTENT_TABS_CSS;
-  doc.head.appendChild(style);
+export function ensureStyles(anchor?: Node | null): void {
+  ensureStyleElement(anchor, STYLE_ELEMENT_ID, CONTENT_TABS_CSS);
 }

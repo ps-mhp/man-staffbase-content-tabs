@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-import { GroupWidth, TabGroup } from "./section-scan";
+import { GroupWidth, TabGroup, columnsOf } from "./section-scan";
 
 /**
  * Rewrites a section so one group of columns becomes a tab panel.
@@ -84,6 +84,18 @@ export interface MountedGroup {
 export const isTransformed = (column: HTMLElement): boolean => column.hasAttribute(GROUP_MARKER);
 
 /**
+ * What to hide so the block leaves no trace in its panel.
+ *
+ * In the Content Designer the element sits in a `custom-block` region that
+ * carries its own margin and shadow; hiding only the element left an empty
+ * framed box above the panel content.
+ */
+const blockOf = (widget: HTMLElement, column: HTMLElement): HTMLElement => {
+  const region = widget.closest<HTMLElement>('[data-c13y-region="custom-block"]');
+  return region !== null && column.contains(region) ? region : widget;
+};
+
+/**
  * Claims the space the replaced columns occupied.
  *
  * The share is asked for as flex *growth*, not as a fixed basis. A section may
@@ -116,16 +128,22 @@ const applyWidth = (container: HTMLElement, width: GroupWidth): void => {
   }
 };
 
+/** A Content Designer row, see `section-scan.ts`. */
+const isDesignerSection = (section: HTMLElement): boolean =>
+  section.matches('[data-c13y-component="container-block"]');
+
 export function transformGroup(group: TabGroup): MountedGroup | null {
   if (group.members.length === 0) return null;
   if (group.members.some(({ column }) => isTransformed(column))) return null;
 
   const first = group.members[0].column;
   if (first.parentElement !== group.section) return null;
+  if (isDesignerSection(group.section)) return transformInPlace(group);
 
-  const originalStyles = group.members.map(({ column, widget }) => ({
+  const blocks = group.members.map(({ column, widget }) => blockOf(widget, column));
+  const originalStyles = group.members.map(({ column }, index) => ({
     column: column.getAttribute("style"),
-    widget: widget.getAttribute("style"),
+    block: blocks[index].getAttribute("style"),
     hidden: column.hidden,
   }));
 
@@ -139,12 +157,12 @@ export function transformGroup(group: TabGroup): MountedGroup | null {
 
   group.section.insertBefore(container, first);
 
-  group.members.forEach(({ column, widget }) => {
+  group.members.forEach(({ column }, index) => {
     column.setAttribute(GROUP_MARKER, "");
     column.classList.add(PANEL_CLASS);
     applyPanelGeometry(column);
     // The block is configuration, not content: it must not show up in the panel.
-    widget.style.setProperty("display", "none", "important");
+    blocks[index].style.setProperty("display", "none", "important");
     container.appendChild(column);
   });
 
@@ -161,16 +179,156 @@ export function transformGroup(group: TabGroup): MountedGroup | null {
   setActive(0);
 
   const revert = (): void => {
-    group.members.forEach(({ column, widget }, index) => {
+    group.members.forEach(({ column }, index) => {
       const saved = originalStyles[index];
+      const block = blocks[index];
       column.removeAttribute(GROUP_MARKER);
       column.classList.remove(PANEL_CLASS);
       column.hidden = saved.hidden;
       if (saved.column === null) column.removeAttribute("style");
       else column.setAttribute("style", saved.column);
-      if (saved.widget === null) widget.removeAttribute("style");
-      else widget.setAttribute("style", saved.widget);
-      group.section.insertBefore(column, container);
+      if (saved.block === null) block.removeAttribute("style");
+      else block.setAttribute("style", saved.block);
+      // Put back only where our container still stands. Has the host removed
+      // it in a re-render, it has placed its columns anew as well, and
+      // reaching for the lost container would throw.
+      if (container.parentNode === group.section) group.section.insertBefore(column, container);
+    });
+    container.remove();
+  };
+
+  return { group, container, bar, setActive, revert };
+}
+
+/** How many tracks the grid lays out right now; 0 when it is none. */
+const trackCount = (section: HTMLElement): number => {
+  const template = getComputedStyle(section).gridTemplateColumns.trim();
+  if (template === "" || template === "none") return 0;
+  // Computed values are resolved lengths; line names in brackets are no track.
+  return template.replace(/\[[^\]]*\]/g, " ").trim().split(/\s+/).length;
+};
+
+/** How many tracks a column spans; the designer writes `span n`. */
+const spanOf = (column: HTMLElement): number => {
+  const match = /span\s+(\d+)/.exec(getComputedStyle(column).gridColumnEnd || "");
+  return match ? Number(match[1]) : 1;
+};
+
+/**
+ * The same group, built without moving a single column.
+ *
+ * Needed for the Content Designer: moving a column detaches the
+ * `sb-custom-block` elements inside it, and the designer does not recreate
+ * their widgets when they are attached again — the tabs' own blocks vanished,
+ * and with them any widget sitting in a panel (seen live on 29.09.2026).
+ *
+ * The bar is inserted as a grid item of its own in front of the first member.
+ * On a multi-track grid it takes the members' tracks in the first row, the
+ * panels take the same tracks in the second, and every other column spans
+ * both rows. On a single track — the designer's narrow layout — document
+ * order already stacks bar and panel, so nothing is placed.
+ */
+function transformInPlace(group: TabGroup): MountedGroup {
+  const { section, members } = group;
+  const first = members[0].column;
+  const blocks = members.map(({ column, widget }) => blockOf(widget, column));
+  const originalStyles = members.map(({ column }, index) => ({
+    column: column.getAttribute("style"),
+    block: blocks[index].getAttribute("style"),
+    hidden: column.hidden,
+  }));
+
+  const container = document.createElement("div");
+  container.className = GROUP_CLASS;
+  const bar = document.createElement("div");
+  bar.className = BAR_CLASS;
+  container.appendChild(bar);
+  section.insertBefore(container, first);
+
+  members.forEach(({ column }, index) => {
+    column.setAttribute(GROUP_MARKER, "");
+    column.classList.add(PANEL_CLASS);
+    blocks[index].style.setProperty("display", "none", "important");
+  });
+
+  // Columns outside the group that were stretched over both rows, so revert
+  // takes back exactly that and nothing a second group may have set.
+  const stretched = new Set<HTMLElement>();
+  const unstretch = (column: HTMLElement): void => {
+    column.style.removeProperty("grid-row");
+    // A column the host rendered without a style attribute gets none back.
+    if (column.getAttribute("style") === "") column.removeAttribute("style");
+  };
+  const memberColumns = new Set(members.map(({ column }) => column));
+
+  const clearPlacement = (): void => {
+    [container, ...memberColumns].forEach((element) => {
+      element.style.removeProperty("grid-column");
+      element.style.removeProperty("grid-row");
+    });
+    stretched.forEach(unstretch);
+    stretched.clear();
+  };
+
+  const place = (): void => {
+    clearPlacement();
+    if (trackCount(section) <= 1) return;
+
+    let line = 1;
+    let start = 1;
+    let span = 0;
+    for (const column of columnsOf(section)) {
+      const own = spanOf(column);
+      if (column === first) start = line;
+      if (memberColumns.has(column)) span += own;
+      line += own;
+    }
+
+    const tracks = `${start} / span ${span}`;
+    container.style.setProperty("grid-column", tracks, "important");
+    container.style.setProperty("grid-row", "1", "important");
+    memberColumns.forEach((column) => {
+      column.style.setProperty("grid-column", tracks, "important");
+      column.style.setProperty("grid-row", "2", "important");
+    });
+    for (const column of columnsOf(section)) {
+      if (memberColumns.has(column) || isTransformed(column)) continue;
+      column.style.setProperty("grid-row", "1 / span 2", "important");
+      stretched.add(column);
+    }
+  };
+
+  place();
+  // The designer switches to a single track through a container query, so
+  // the placement has to follow the row's width, not only the first pass.
+  const resize = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(place);
+  resize?.observe(section);
+
+  const setActive = (index: number): void => {
+    if (index < 0 || index >= members.length) return;
+    members.forEach(({ column }, position) => {
+      const active = position === index;
+      column.hidden = !active;
+      if (active) column.style.removeProperty("display");
+      else column.style.setProperty("display", "none", "important");
+    });
+  };
+
+  setActive(0);
+
+  const revert = (): void => {
+    resize?.disconnect();
+    stretched.forEach(unstretch);
+    members.forEach(({ column }, index) => {
+      const saved = originalStyles[index];
+      const block = blocks[index];
+      column.removeAttribute(GROUP_MARKER);
+      column.classList.remove(PANEL_CLASS);
+      column.hidden = saved.hidden;
+      if (saved.column === null) column.removeAttribute("style");
+      else column.setAttribute("style", saved.column);
+      if (saved.block === null) block.removeAttribute("style");
+      else block.setAttribute("style", saved.block);
     });
     container.remove();
   };
