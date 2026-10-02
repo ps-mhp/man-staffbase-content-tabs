@@ -14,10 +14,10 @@
 // them deliberately. `man(...)` itself compiles to `var(--man-x, <fallback>)`,
 // so the fallback still works when a host page doesn't have the MAN theme
 // loaded at all (preview, a different tenant, …) — nothing here assumes
-// `onetruck-css` is present.
+// `man-theme` is present.
 //
 // A tab is a plain `<div role="tab">`, not a `<button>` — deliberately. The
-// MAN theme (`onetruck-css`) styles every bare `button` inside `.page` as a
+// MAN theme (`man-theme`) styles every bare `button` inside `.page` as a
 // full-width, uppercase, red call-to-action (`.page button:not(...)`), which
 // is meant for real CTAs elsewhere and has nothing to do with a tab strip.
 // Fighting that rule from here would mean guessing its exact properties and
