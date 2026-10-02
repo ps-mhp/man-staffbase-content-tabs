@@ -17,13 +17,15 @@
 // `man-theme` is present.
 //
 // A tab is a plain `<div role="tab">`, not a `<button>` — deliberately. The
-// MAN theme (`man-theme`) styles every bare `button` inside `.page` as a
-// full-width, uppercase, red call-to-action (`.page button:not(...)`), which
-// is meant for real CTAs elsewhere and has nothing to do with a tab strip.
-// Fighting that rule from here would mean guessing its exact properties and
-// repeating them with `!important`, which breaks again the moment that global
-// rule changes. Not being a `<button>` sidesteps it entirely, so none of
-// these declarations need `!important` to hold.
+// MAN theme (`man-theme`, `src/03-elements/button/_app.scss`) gives every bare
+// `button` inside `.page` its own button outline — padding, no border,
+// Condensed type (`.page button:not(...)`) — and every `button` anywhere its
+// radius with `!important`. That is meant for buttons in the content and has
+// nothing to do with a tab strip. Fighting it from here would mean guessing
+// its exact properties and repeating them with `!important`, which breaks
+// again the moment that global rule changes. Not being a `<button>` sidesteps
+// it entirely, so the declarations below need `!important` only for the
+// focus ring.
 //
 // The strip scrolls sideways rather than wrapping. On a narrow screen wrapped
 // tabs push the content down by an unpredictable amount, and the panel below
@@ -32,31 +34,35 @@
 // The class names below (`.content-tabs-group`, `.content-tabs-bar`) are
 // literal copies of `GROUP_CLASS`/`BAR_CLASS` from `../tabs-transform`. A
 // `.scss` file cannot import a TypeScript constant, so keep both in sync by
-// hand if either one changes — `styles.test.ts` only checks that the
-// compiled stylesheet still contains `.content-tabs-group`.
+// hand if either one changes — `styles.test.ts` checks that the compiled
+// stylesheet still contains `.content-tabs-group`.
+//
+// The strip follows the Craft tabs (MAN Design System, size m — man-theme
+// `analysis/craft/foundations-and-display.md` §2.10): 40px, Condensed 700
+// 16px in mixed case, padding 0 16, a 2px baseline #EAEDF3, the selected tab
+// in red with a 2px red underline, and on hover a 2px #AD0040 line fading in
+// over 300ms.
 
 @use "@shared/stylings/man-tokens" as *;
+@use "@shared/stylings/man-craft" as *;
 
 .content-tabs-group,
 .content-tabs-bar,
 .content-tabs-bar__list {
-  // `man("red")` ist zufällig exakt der bisherige Literal-Wert (#e40045) —
-  // kein Zufall, beides ist MAN-Rot, aber jetzt aus einer Quelle statt
-  // zweimal getippt. Die übrigen drei Farben haben keine 1:1-Entsprechung
-  // in der Palette (sie wurden unabhängig von den Tokens gewählt); die
-  // nächstliegenden Semantik-Tokens (`text`, `text-muted`, `border`) passen
-  // aber genauso gut zur Rolle (aktiv/hover = dunkelster Text, inaktiv =
-  // gedämpfter Text, Streifen-Trennlinie = Standard-Rahmenfarbe) und lösen
-  // sich mit dem Theme mit auf, statt für sich zu stehen.
+  // Die Farben der Craft-Tabs, aus `man(...)` statt getippt, damit sie sich
+  // mit dem Theme auflösen: Schrift in Textfarbe (auch bei Hover), gewählt
+  // rote Schrift und rote Unterlinie (`red`), Hover-Unterlinie `red-hover`
+  // (#AD0040), Grundlinie `border-subtle` (#EAEDF3).
   // Sass wertet Ausdrücke in Custom-Property-Werten (`--x: ...;`) nicht
   // automatisch aus — nur `#{...}`-Interpolation tut das. Ohne sie stünde
   // hier wörtlich `man("red")` statt `var(--man-red, #e40045)` im Output.
   --content-tabs-accent: #{man("red")};
+  --content-tabs-hover-accent: #{man("red-hover")};
   --content-tabs-tab-bg: transparent;
-  --content-tabs-tab-color: #{man("text-muted")};
+  --content-tabs-tab-color: #{man("text")};
   --content-tabs-tab-hover-color: #{man("text")};
-  --content-tabs-tab-active-color: #{man("text")};
-  --content-tabs-strip-border: #{man("border")};
+  --content-tabs-tab-active-color: #{man("red")};
+  --content-tabs-strip-border: #{man("border-subtle")};
 }
 
 .content-tabs-group {
@@ -67,55 +73,70 @@
 
 .content-tabs-bar__list {
   display: flex;
-  gap: man("space-1");
   overflow-x: auto;
   scrollbar-width: thin;
   background: transparent;
-  border-bottom: man("border-width") solid var(--content-tabs-strip-border);
+  // Die Grundlinie als Linie INNEN (wie man-theme
+  // `src/04-shell/mega-menu/_app.scss`; kein Schatten, ohne Unschärfe): die
+  // Unterlinie eines Tabs soll sie überdecken, und als Scroll-Container
+  // schneidet die Leiste alles ab, was über ihre Innenkante hinausragt — einen
+  // `border-bottom` könnte kein Tab überdecken.
+  box-shadow: inset 0 calc(-1 * #{man("border-width-strong")}) 0 0 var(--content-tabs-strip-border);
   // 30px trifft keinen Abstand aus der Space-Skala (24px/32px) — bewusst
   // Layout-Entscheidung dieses Widgets, kein Marken-Token, deshalb Literal.
   margin-bottom: 30px;
 
   .content-tabs-tab {
+    align-items: center;
     background: var(--content-tabs-tab-bg);
     border: 0;
+    // The underline: invisible at rest, it sits inside the 40px at the
+    // bottom, right on the strip's baseline.
     border-bottom: man("border-width-strong") solid transparent;
-    border-radius: man("radius");
+    // Craft tabs carry the 2px radius; only on top, the line runs below.
+    border-radius: man("radius-soft") man("radius-soft") 0 0;
     box-shadow: none;
+    box-sizing: border-box;
     color: var(--content-tabs-tab-color);
     cursor: pointer;
-    display: inline-block;
+    display: inline-flex;
     font: inherit;
+    font-family: man("font-head");
+    font-size: 16px;
+    font-weight: man("weight-head");
+    height: 40px;
+    letter-spacing: normal;
+    line-height: 1;
     margin: 0;
     opacity: 1;
-    padding: man("space-2") man("space-4");
+    padding: 0 man("space-4");
     position: relative;
-    @include man-type("h4");
+    text-transform: none;
+    transition: border-bottom-color man("duration-slow") man("ease-move");
     white-space: nowrap;
     width: auto;
 
     &:hover,
-    &:focus,
     &:active {
       background: var(--content-tabs-tab-bg);
       color: var(--content-tabs-tab-hover-color);
-      border-bottom-color: var(--content-tabs-accent);
+      border-bottom-color: var(--content-tabs-hover-accent);
     }
 
     &[aria-selected="true"] {
       background: var(--content-tabs-tab-bg);
       color: var(--content-tabs-tab-active-color);
       border-bottom-color: var(--content-tabs-accent);
-      font-weight: 600;
     }
 
-    // `.page :focus-visible` in the MAN theme sets its own outline colour
-    // with `!important`; this is a legitimate, unrelated global concern
-    // (consistent focus rings everywhere), not a button-reset fight, so it
-    // still has to be matched at the same weight here.
+    // `.page :focus-visible` in the MAN theme draws the Craft ring with
+    // `!important`, 2px outside the element. The strip scrolls sideways and
+    // clips whatever reaches past its inner edge, so the same ring is drawn
+    // inside here — like Craft's own tabs (`focus-no-offset`) — and has to
+    // carry the same weight.
     &:focus-visible {
-      outline: 2px solid var(--content-tabs-accent) !important;
-      outline-offset: -2px;
+      @include man-focus-ring(true);
+      outline-offset: calc(-1 * #{man("focus-width")}) !important;
     }
   }
 }
