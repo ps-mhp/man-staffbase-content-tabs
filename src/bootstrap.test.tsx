@@ -398,3 +398,95 @@ describe("runContentTabs in the Content Designer", () => {
     stop();
   });
 });
+
+/**
+ * The Content Designer's markup since `custom-block.mjs` 10.0.12, seen live on
+ * van on 19.10.2026: the block's element no longer sits in the page, but in a
+ * shadow root of its own on `[data-sb-custom-block-widget-host]`. In there,
+ * the designer rebuilds the block's ancestors as `display: contents` copies
+ * (`data-sb-c13y-ancestor-copy`) carrying the same `data-c13y-*` attributes —
+ * each block gets a row and a column of its own that hold nothing else.
+ */
+const addIsolatedDesignerWidget = (
+  column: HTMLElement,
+  title: string,
+): { widget: HTMLElement; region: HTMLElement } => {
+  const region = document.createElement("div");
+  region.dataset.c13yRegion = "custom-block";
+  const wrapper = document.createElement("sb-custom-block");
+  const host = document.createElement("div");
+  host.setAttribute("data-sb-custom-block-widget-host", "");
+  wrapper.appendChild(host);
+  region.appendChild(wrapper);
+  column.insertBefore(region, column.firstChild);
+
+  const own = host.attachShadow({ mode: "open" });
+  const copy = (attribute: string, value: string, parent: Node): HTMLElement => {
+    const element = document.createElement("div");
+    element.setAttribute("data-sb-c13y-ancestor-copy", "");
+    element.setAttribute(attribute, value);
+    element.style.display = "contents";
+    parent.appendChild(element);
+    return element;
+  };
+  const row = copy("data-c13y-component", "container-block", own);
+  const ownColumn = copy("data-c13y-component", "column-block", row);
+  const ownRegion = copy("data-c13y-region", "custom-block", ownColumn);
+  const slot = document.createElement("div");
+  slot.setAttribute("data-sb-custom-block-widget-slot", "");
+  ownRegion.appendChild(slot);
+  const widget = slot.appendChild(document.createElement("content-tabs"));
+  registerTab(widget, title);
+  return { widget, region };
+};
+
+describe("runContentTabs in the Content Designer, block in its own shadow root", () => {
+  it("groups the columns of the page, not the copies around the block", async () => {
+    const { shadow, section, columns } = buildDesignerSection(3);
+    addIsolatedDesignerWidget(columns[0], "Eins");
+    addIsolatedDesignerWidget(columns[1], "Zwei");
+    addIsolatedDesignerWidget(columns[2], "Drei");
+    await flush();
+
+    const stop = runContentTabs();
+    await flush();
+
+    expect(section.querySelectorAll(`:scope > .${GROUP_CLASS}`)).toHaveLength(1);
+    expect(shadow.querySelectorAll('[role="tab"]')).toHaveLength(3);
+    expect(columns[0].hidden).toBe(false);
+    expect(columns[1].hidden).toBe(true);
+    expect(columns[2].hidden).toBe(true);
+    stop();
+  });
+
+  it("hides the block's wrapper in the page", async () => {
+    const { columns } = buildDesignerSection(2);
+    const { region } = addIsolatedDesignerWidget(columns[0], "Eins");
+    addIsolatedDesignerWidget(columns[1], "Zwei");
+    await flush();
+
+    const stop = runContentTabs();
+    await flush();
+
+    expect(region.style.getPropertyValue("display")).toBe("none");
+    stop();
+    expect(region.style.getPropertyValue("display")).toBe("");
+  });
+
+  it("rebuilds when the host re-renders the page around the blocks", async () => {
+    const { section, columns } = buildDesignerSection(2);
+    addIsolatedDesignerWidget(columns[0], "Eins");
+    addIsolatedDesignerWidget(columns[1], "Zwei");
+    await flush();
+
+    const stop = runContentTabs();
+    await flush();
+
+    section.querySelector(`.${GROUP_CLASS}`)!.remove();
+    columns.forEach((column) => section.appendChild(column));
+    await flush();
+
+    expect(section.querySelector(`.${GROUP_CLASS}`)).not.toBeNull();
+    stop();
+  });
+});

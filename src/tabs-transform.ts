@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-import { GroupWidth, TabGroup, columnsOf } from "./section-scan";
+import { GroupWidth, TabGroup, anchorOf, columnsOf } from "./section-scan";
 
 /**
  * Rewrites a section so one group of columns becomes a tab panel.
@@ -91,8 +91,9 @@ export const isTransformed = (column: HTMLElement): boolean => column.hasAttribu
  * framed box above the panel content.
  */
 const blockOf = (widget: HTMLElement, column: HTMLElement): HTMLElement => {
-  const region = widget.closest<HTMLElement>('[data-c13y-region="custom-block"]');
-  return region !== null && column.contains(region) ? region : widget;
+  const anchor = anchorOf(widget);
+  const region = anchor.closest<HTMLElement>('[data-c13y-region="custom-block"]');
+  return region !== null && column.contains(region) ? region : anchor;
 };
 
 /**

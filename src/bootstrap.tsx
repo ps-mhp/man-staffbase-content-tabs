@@ -18,7 +18,7 @@ import { flushSync } from "react-dom";
 import { DocumentWatch, observeDocument, whenPageReady } from "@shared/dom";
 
 import { markEditorGroups } from "./editor-view";
-import { COLUMN_SELECTOR, SECTION_SELECTOR, TabGroup, scanAll } from "./section-scan";
+import { COLUMN_SELECTOR, SECTION_SELECTOR, TabGroup, anchorOf, scanAll } from "./section-scan";
 import { ensureStyles } from "./styles";
 import { onTabsChanged, registeredTabs, titleOf } from "./tab-registry";
 import { isTransformed, transformGroup } from "./tabs-transform";
@@ -74,8 +74,9 @@ const numberOf = (element: Element): number => {
 const signatureOf = (widgets: readonly HTMLElement[]): string =>
   widgets
     .map((widget) => {
-      const column = widget.closest<HTMLElement>(COLUMN_SELECTOR);
-      const section = widget.closest<HTMLElement>(SECTION_SELECTOR);
+      const anchor = anchorOf(widget);
+      const column = anchor.closest<HTMLElement>(COLUMN_SELECTOR);
+      const section = anchor.closest<HTMLElement>(SECTION_SELECTOR);
       return `${numberOf(widget)}@${column ? numberOf(column) : "-"}/${
         section ? numberOf(section) : "-"
       }="${titleOf(widget)}"`;
@@ -214,7 +215,8 @@ export function runContentTabs(): () => void {
   // root, and a document observer sees nothing that happens inside it — a
   // re-render there would throw the tabs away unnoticed. Each root a block
   // turns up in gets its own watch, and every pass is shielded from all of
-  // them.
+  // them. A block the designer isolates in a shadow root of its own is
+  // watched where its host stands: that is where the page is re-rendered.
   const watches = new Map<Node, DocumentWatch>();
   const guarded = (): void => {
     const all = [...watches.values()];
@@ -225,7 +227,7 @@ export function runContentTabs(): () => void {
   function syncAndWatchRoots(): void {
     sync();
     for (const widget of registeredTabs()) {
-      const root = widget.getRootNode();
+      const root = anchorOf(widget).getRootNode();
       if (root instanceof ShadowRoot && !watches.has(root)) watches.set(root, observeDocument(guarded, root));
     }
   }

@@ -34,6 +34,34 @@
  */
 export const SECTION_SELECTOR = '.ui-commons__section__wrapper, [data-c13y-component="container-block"]';
 
+/**
+ * The element a block is rendered into when the designer isolates it.
+ *
+ * Since `custom-block.mjs` 10.0.12 (seen live on van on 19.10.2026) the block's
+ * element sits in a shadow root of its own on this host, below `display:
+ * contents` copies of its ancestors (`data-sb-c13y-ancestor-copy`). The copies
+ * carry the same `data-c13y-*` attributes as the real row and column, but hold
+ * nothing except the block — asked from in there, every block is a group of
+ * one, and its panel is empty.
+ */
+const ISOLATING_HOST = "[data-sb-custom-block-widget-host]";
+
+/**
+ * Where a block stands in the page.
+ *
+ * The block itself, unless the designer has isolated it: then its host, which
+ * sits in the real column. Every positional question — which row, which
+ * column, which wrapper to hide — has to be asked from here.
+ */
+export function anchorOf(widget: HTMLElement): HTMLElement {
+  let anchor = widget;
+  for (let root = anchor.getRootNode(); root instanceof ShadowRoot; root = anchor.getRootNode()) {
+    if (!(root.host instanceof HTMLElement) || !root.host.matches(ISOLATING_HOST)) break;
+    anchor = root.host;
+  }
+  return anchor;
+}
+
 /** One column of a section. Columns are direct children of the section. */
 export const COLUMN_SELECTOR = '.ui-commons__section__column, [data-c13y-component="column-block"]';
 
@@ -144,7 +172,7 @@ export function scanSection(
 
   const widgetList = Array.from(widgets);
   for (const column of columns) {
-    const widget = widgetList.find((candidate) => column.contains(candidate));
+    const widget = widgetList.find((candidate) => column.contains(anchorOf(candidate)));
     if (widget) {
       run.push({ column, widget });
     } else {
@@ -161,7 +189,7 @@ export function scanAll(widgets: readonly HTMLElement[]): TabGroup[] {
   const bySection = new Map<HTMLElement, Set<HTMLElement>>();
 
   for (const widget of widgets) {
-    const section = widget.closest<HTMLElement>(SECTION_SELECTOR);
+    const section = anchorOf(widget).closest<HTMLElement>(SECTION_SELECTOR);
     if (!section) continue;
     if (!bySection.has(section)) bySection.set(section, new Set());
     bySection.get(section)!.add(widget);
