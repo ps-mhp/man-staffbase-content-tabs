@@ -74,6 +74,12 @@
 .content-tabs-bar__list {
   display: flex;
   overflow-x: auto;
+  // Der Finger schiebt die Leiste, nicht die Seite: ohne `contain` löste das
+  // waagerechte Wischen am Ende der Leiste die Zurück-Geste des Browsers aus.
+  // Das Fangraster lässt die Reiter nach dem Schieben bündig stehen, statt
+  // einen von ihnen angeschnitten am Rand zu lassen.
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
   scrollbar-width: thin;
   background: transparent;
   // Die Grundlinie als Linie INNEN (wie man-theme
@@ -115,6 +121,16 @@
     transition: border-bottom-color man("duration-slow") man("ease-move");
     white-space: nowrap;
     width: auto;
+    scroll-snap-align: start;
+
+    // Schmal enger gepolstert: mit 16px je Seite passte auf einem 393px
+    // breiten Schirm kaum mehr als ein Reiter ins Bild, und dass die Leiste
+    // überhaupt weitergeht, war nicht zu sehen. 12px bringen den nächsten
+    // Reiter wieder an den Rand — der beste Hinweis darauf, dass sich
+    // schieben lässt.
+    @media (max-width: 767px) {
+      padding: 0 man("space-3");
+    }
 
     &:hover,
     &:active {
