@@ -27,16 +27,12 @@ import { encodePayload } from "@shared/payload";
 import { configurationSchema, uiSchema } from "./configuration-schema";
 import { clearTabsForTests, registerTab } from "./tab-registry";
 import { startTabTitleInjector, tabTitleShell } from "./tab-title-injector";
-import { modalRoot, queryDeep, queryInModal, settleModal } from "@shared/ui/config-modal.testing";
+import { modalRoot, queryDeep, queryInModal, settleModal, settleEditor } from "@shared/ui/config-modal.testing";
+
+const EDITOR_SELECTOR = '[data-testid="tab-title-editor"]';
+const EDITOR_ROUNDS = 5;
 
 const FIELD = "#root_tab-title";
-
-/** Das Modal lädt nach, der Editor darin noch einmal: so oft warten, bis er da ist. */
-async function settleEditor(): Promise<void> {
-  for (let round = 0; round < 5 && queryInModal('[data-testid="tab-title-editor"]') === null; round += 1) {
-    await settleModal();
-  }
-}
 
 interface Opened {
   container: HTMLElement;
@@ -54,7 +50,7 @@ async function open(title?: string): Promise<Opened> {
   await act(async () => {
     stop = startTabTitleInjector(container);
   });
-  await settleEditor();
+  await settleEditor(EDITOR_SELECTOR, EDITOR_ROUNDS);
   return { container, onSubmit, stop };
 }
 
