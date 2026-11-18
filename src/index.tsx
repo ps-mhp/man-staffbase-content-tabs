@@ -23,55 +23,19 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { BlockFactory, BlockDefinition, ExternalBlockDefinition, BaseBlock } from "widget-sdk";
-import { decodePayload, isPayload } from "@shared/payload";
 import { registerTab, setTabTitle } from "./tab-registry";
+import { TAB_TITLE_ATTRIBUTE, TITLE_KEYS, readTabTitle } from "./tab-title";
 import { TabLabel } from "./editor-view";
 import { startContentTabs } from "./bootstrap";
 import { configurationSchema, uiSchema } from "./configuration-schema";
 import icon from "../resources/content-tabs.svg";
 import pkg from "../package.json";
 
-/**
- * The one name the tab title goes by.
- *
- * Three places have to agree on it, and every one of them is load-bearing:
- * the key in the configuration schema, because the host saves a value under
- * its schema key verbatim; the attribute declared to the host, because it
- * drops an attribute it was never told about; and the name read back here.
- * They disagreed once — schema `tabTitle`, declared `tab-title` — and every
- * title fell on the floor between the dialog and the page, with nothing
- * anywhere to say so.
- *
- * It is also the attribute registered for this widget in the Staffbase
- * installation (see `widgets.json`), which is why the hyphenated spelling is
- * the one they all moved to: changing it would mean re-registering the widget.
- */
-export const TAB_TITLE_ATTRIBUTE = "tab-title";
-
-/**
- * Names an already-saved title may sit under.
- *
- * A page configured by an earlier build may carry either of the older
- * spellings. Reading all of them costs nothing and keeps that content working.
- */
-const TITLE_KEYS = [TAB_TITLE_ATTRIBUTE, "tabtitle", "tabTitle"] as const;
+// Bisher hier zu Hause; Tests und Aufrufer lesen sie weiter von hier.
+export { TAB_TITLE_ATTRIBUTE, readTabTitle };
 
 /** Attributes handled by the widget; mirrored in the configuration schema. */
 const widgetAttributes: string[] = [TAB_TITLE_ATTRIBUTE];
-
-/**
- * The tab title, whatever shape it arrives in.
- *
- * The value has already passed the host's own decoding by the time it gets
- * here. What may still be wrapped is our own `b64:` envelope, which survives a
- * machine-translation pass — see `@shared/payload`.
- */
-export function readTabTitle(raw: unknown): string | null {
-  if (typeof raw !== "string") return null;
-  const text = isPayload(raw) ? (decodePayload(raw) ?? "") : raw;
-  const trimmed = text.trim();
-  return trimmed === "" ? null : trimmed;
-}
 
 /**
  * Rendered inside the `<content-tabs>` element itself.
