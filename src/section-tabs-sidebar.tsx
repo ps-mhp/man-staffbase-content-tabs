@@ -23,6 +23,8 @@
 
 import * as React from "react";
 import { Info, TriangleAlert } from "lucide-react";
+import { Note } from "@man/config-ui/form/note";
+import { SidebarFootnote } from "@man/config-ui/sidebar/sidebar-footnote";
 import { SidebarPanel } from "@man/config-ui/sidebar/sidebar-panel";
 import { cn } from "@man/config-ui/primitives/utils";
 
@@ -73,23 +75,17 @@ function TabRow({ entry, number }: { entry: TabEntry; number: number }): React.R
   );
 }
 
-function Note({ warning, children }: { warning: boolean; children: React.ReactNode }): React.ReactElement {
-  const Icon = warning ? TriangleAlert : Info;
-  return (
-    <p className="mx-2 flex items-start gap-2.5 rounded-md bg-secondary px-3.5 py-3 text-[13px] leading-normal text-secondary-foreground">
-      <Icon className={cn("mt-0.5 size-4 shrink-0", warning && "text-warning")} aria-hidden />
-      <span>{children}</span>
-    </p>
-  );
-}
-
 export function SectionTabsSidebar({ edited, entries }: SectionTabsSidebarProps): React.ReactElement {
   const known = edited.kind === "section";
   return (
     <SidebarPanel
       title={TITLE}
       count={known ? entries.length : undefined}
-      footer={<p className="text-[13px] leading-normal text-muted-foreground">{FOOTER}</p>}
+      footer={
+        <SidebarFootnote>
+          <p>{FOOTER}</p>
+        </SidebarFootnote>
+      }
     >
       {known ? (
         <ul aria-label={`${TITLE}, nur lesen`} className="m-0 flex list-none flex-col gap-1 p-0">
@@ -98,7 +94,13 @@ export function SectionTabsSidebar({ edited, entries }: SectionTabsSidebarProps)
           ))}
         </ul>
       ) : (
-        <Note warning={edited.kind === "loose"}>{edited.kind === "loose" ? LOOSE_NOTE : UNKNOWN_NOTE}</Note>
+        <Note
+          icon={edited.kind === "loose" ? TriangleAlert : Info}
+          tone={edited.kind === "loose" ? "warning" : "neutral"}
+          className="mx-2"
+        >
+          {edited.kind === "loose" ? LOOSE_NOTE : UNKNOWN_NOTE}
+        </Note>
       )}
     </SidebarPanel>
   );
