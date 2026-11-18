@@ -21,10 +21,16 @@ import {
   clearTabsForTests,
 } from "./tab-registry";
 
+// Das Fenster „Tab benennen“ fände sonst das Feld im Dialog des Harness,
+// öffnete sich und lüde den ganzen Rahmen nach – hier geht es nur um den
+// Block. Dass `register` das Fenster startet, prüft `index.register.test.tsx`.
+jest.mock("./tab-title-injector", () => ({ startTabTitleInjector: () => () => undefined }));
+
 // TAB_TITLE_ATTRIBUTE must come from a dynamic import so that the static
 // module-level guard in index.tsx (`if (window.defineBlock === "function")`)
 // doesn't fire before the harness installs window.defineBlock.
 let TAB_TITLE_ATTRIBUTE: string;
+let stopTabTitleEditor: () => void = () => undefined;
 
 // Install the dev harness once before the module is loaded so that
 // window.defineBlock exists when the widget calls it at module-evaluation time.
@@ -41,6 +47,7 @@ beforeAll(async () => {
     mod = await import("./index");
   });
   TAB_TITLE_ATTRIBUTE = mod!.TAB_TITLE_ATTRIBUTE;
+  stopTabTitleEditor = mod!.stopTabTitleEditor;
   // Let rjsf Form's async effects (from @rjsf/mui) settle before tests start.
   await waitFor(() => {
     expect(document.querySelector("form")).not.toBeNull();
@@ -50,6 +57,11 @@ beforeAll(async () => {
 
 beforeEach(() => {
   clearTabsForTests();
+});
+
+// Die Klick-Spur lauscht am Dokument; abbauen, bevor jsdom `window` abräumt.
+afterAll(async () => {
+  await act(async () => stopTabTitleEditor());
 });
 
 afterEach(async () => {

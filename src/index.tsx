@@ -25,6 +25,8 @@ import ReactDOM from "react-dom/client";
 import { BlockFactory, BlockDefinition, ExternalBlockDefinition, BaseBlock } from "widget-sdk";
 import { registerTab, setTabTitle } from "./tab-registry";
 import { TAB_TITLE_ATTRIBUTE, TITLE_KEYS, readTabTitle } from "./tab-title";
+import { startTabTitleInjector } from "./tab-title-injector";
+import { trackPointedTab } from "./edited-tab";
 import { TabLabel } from "./editor-view";
 import { startContentTabs } from "./bootstrap";
 import { configurationSchema, uiSchema } from "./configuration-schema";
@@ -36,6 +38,20 @@ export { TAB_TITLE_ATTRIBUTE, readTabTitle };
 
 /** Attributes handled by the widget; mirrored in the configuration schema. */
 const widgetAttributes: string[] = [TAB_TITLE_ATTRIBUTE];
+
+let stopEditor: (() => void) | null = null;
+
+/**
+ * Hält das Fenster „Tab benennen“ und das Merken der angeklickten Spalte an.
+ *
+ * Nur für Tests offengelegt: jsdom baut `window` zwischen Testdateien ab,
+ * ein übrig gebliebener `MutationObserver` würfe dann. Im Betrieb ruft es
+ * niemand.
+ */
+export function stopTabTitleEditor(): void {
+  stopEditor?.();
+  stopEditor = null;
+}
 
 /**
  * Rendered inside the `<content-tabs>` element itself.
@@ -137,7 +153,17 @@ if (typeof window.defineBlock === "function") {
   void startWidget({
     name: "content-tabs",
     version: pkg.version,
+    // Fenster und Klick-Spur gehören dem, der registriert – nicht jedem
+    // Bündel, das lädt: Im Entwicklungsmodus liefen sonst zwei Fenster.
+    // Die Spur muss vor dem Dialog laufen: Der Klick, der ihn öffnet, sagt,
+    // welcher Block gemeint ist (`edited-tab.ts`).
     register: () => {
+      const stopInjector = startTabTitleInjector();
+      const stopTracking = trackPointedTab();
+      stopEditor = () => {
+        stopInjector();
+        stopTracking();
+      };
       window.defineBlock(externalBlockDefinition);
       startContentTabs();
     },
