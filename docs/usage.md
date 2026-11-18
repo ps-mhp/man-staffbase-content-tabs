@@ -7,8 +7,9 @@
    wählen. Ohne Spalten funktioniert das Widget nicht — die Spalten sind das,
    was später zu Tabs wird.
 3. In die **linke Spalte** das Widget **Content-Tabs** ziehen.
-4. In den Widget-Einstellungen bei **Titel des Tabs** die Beschriftung
-   eintragen, z. B. `Ankündigungen`, und speichern.
+4. Die Widget-Einstellungen öffnen. Im Fenster **Tab benennen** bei
+   **Titel des Tabs** die Beschriftung eintragen, z. B. `Ankündigungen`,
+   **Übernehmen** wählen und im Studio speichern.
 5. Unter das Widget — **in dieselbe Spalte** — den Inhalt legen, der in diesem
    Tab erscheinen soll: Text, Bilder, andere Widgets, beliebig viele Elemente.
 6. Schritte 3 bis 5 für die **rechte Spalte** wiederholen, z. B. mit dem Titel
@@ -22,7 +23,8 @@ Spalten von links nach rechts.
 ## Weiteren Tab hinzufügen
 
 1. Dem Abschnitt eine weitere **Spalte** hinzufügen.
-2. Ein Content-Tabs-Widget hineinziehen und ihm einen **Titel des Tabs** geben.
+2. Ein Content-Tabs-Widget hineinziehen und ihm im Fenster **Tab benennen**
+   einen **Titel des Tabs** geben.
 3. Den Inhalt darunter in dieselbe Spalte legen.
 4. Speichern.
 

@@ -21,6 +21,17 @@ Antwort: Nicht im Widget. Der Inhalt ist alles, was **in derselben Spalte**
 unter dem Content-Tabs-Widget liegt — beliebige Texte, Bilder und andere
 Widgets.
 
+**Frage:** Im Fenster „Tab benennen“ steht links statt der Tabs nur ein
+Hinweis.
+
+Antwort: Das Fenster erkennt den bearbeiteten Tab an seinem Titel und an
+der Spalte, in die zuletzt geklickt wurde. Heißen zwei Tabs gleich – oder
+noch beide gar nicht – und wurde vorher nicht in die Spalte geklickt, ist
+unklar, welcher gemeint ist. Der Titel wird trotzdem übernommen. Wer erst in
+die Spalte des Tabs klickt und dann die Einstellungen öffnet, sieht die
+Liste. Lautet der Hinweis, der Block stehe in keiner Spalte eines
+Abschnitts, gilt die erste Frage oben.
+
 **Frage:** Ich habe nur eine Spalte mit dem Widget. Warum sehe ich einen
 einzelnen Tab?
 

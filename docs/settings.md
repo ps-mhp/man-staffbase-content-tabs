@@ -7,6 +7,30 @@
 Das ist die einzige Einstellung. Alles andere ergibt sich aus der Anordnung
 der Spalten.
 
+## Das Fenster „Tab benennen“
+
+Öffnen Sie die Einstellungen des Widgets, erscheint das Fenster
+**Tab benennen** im Vollbild:
+
+- **Links** stehen die **Tabs im Abschnitt** mit Nummer und Spalte; der
+  Tab, den Sie gerade bearbeiten, ist markiert. Die Liste ist nur zum
+  Ablesen – Anzahl und Reihenfolge ändern Sie im Studio am Abschnitt.
+- **In der Mitte** steht oben „Tab 2 von 4“ und die Spalte, darunter das
+  Feld **Titel des Tabs** und eine kleine Vorschau **So erscheint die
+  Leiste**, die beim Tippen mitläuft.
+- **Übernehmen** schreibt den Titel in die Einstellungen des Widgets,
+  **Abbrechen** verwirft ihn. Gesichert wird erst mit **Speichern** im
+  Studio. Rückgängig, Wiederholen und die Hilfe (F1) finden Sie oben im
+  Kopf.
+
+Lässt sich nicht bestimmen, zu welchem Abschnitt der Tab gehört – etwa weil
+ein anderer Tab genauso heißt –, zeigt die linke Seite einen Hinweis statt
+der Liste. Steht der Block in keiner Spalte eines Abschnitts, warnt sie: So
+wird auf der Seite kein Tab daraus.
+
+Ein geschlossenes Fenster öffnet der Knopf **Tab benennen** in den
+Einstellungen wieder.
+
 ## Hinweise zum Titel
 
 - **Kurz halten.** Die Beschriftungen stehen nebeneinander in einer Zeile;

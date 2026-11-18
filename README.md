@@ -8,8 +8,10 @@ Gruppen voneinander.
 ## Benutzung
 
 1. In jede Spalte, die ein Tab werden soll, einen `content-tabs`-Block
-   einfügen und ihm über das Attribut **Tab-Titel** (`tab-title`) einen Namen
-   geben.
+   einfügen und ihm im Fenster **Tab benennen** einen Namen geben. Das
+   Fenster liegt im gemeinsamen Vollbild-Rahmen (`@man/config-ui`), zeigt
+   links die Tabs des Abschnitts und schreibt in das Attribut `tab-title` –
+   ein weiteres Attribut gibt es nicht.
 2. Benachbarte Spalten mit Block bilden automatisch eine Gruppe — sie müssen
    nur nebeneinander liegen.
 3. Eine Spalte **ohne** Block dazwischen beendet die Gruppe; die Spalte selbst
