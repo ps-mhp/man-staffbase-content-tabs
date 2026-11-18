@@ -1,14 +1,15 @@
 # Passo a passo
 
-## Criar duas separadores
+## Criar dois separadores
 
 1. Abrir a página no CMS para edição.
 2. Inserir uma **secção** (Section) e selecionar **duas colunas**
    como layout. Sem colunas, o widget não funciona — as colunas são o que
    mais tarde se tornarão separadores.
-3. Arraste o widget **Content-Tabs** para a **coluna da esquerda**.
-4. Nas definições do widget, em **Título do separador**, introduza o nome
-   pretendido, por exemplo, `Anúncios`, e guarde.
+3. Arraste o widget **Separadores de Conteúdo** para a **coluna da esquerda**.
+4. Abra as definições do widget. Na janela **Nomear separador**, em
+   **Título do separador**, introduza o nome, por exemplo, `Anúncios`,
+   selecione **Aplicar** e guarde no Studio.
 5. Abaixo do widget — **na mesma coluna** — coloque o conteúdo que deve aparecer nesta
    separador: texto, imagens, outros widgets, quantos elementos quiser.
 6. Repita os passos 3 a 5 para a **coluna da direita**, por exemplo, com o título
@@ -22,7 +23,8 @@ colunas, da esquerda para a direita.
 ## Adicionar mais uma aba
 
 1. Adicione mais uma **coluna** à secção.
-2. Arraste um widget «Content Tabs» para dentro dela e atribua-lhe um **título da aba**.
+2. Arraste um widget «Content Tabs» para dentro dela e, na janela **Nomear aba**,
+   atribua-lhe um **título da aba**.
 3. Coloque o conteúdo por baixo, na mesma coluna.
 4. Guarde.
 
@@ -44,12 +46,12 @@ Não há limite máximo. Se os títulos já não couberem lado a lado,
 
 ## Dois grupos de separadores distintos numa página
 
-Todas as colunas **diretamente adjacentes** com o widget «Content-Tabs» são
-automaticamente agrupadas num **único** grupo. Para dois grupos separados:
+Todas as colunas **diretamente adjacentes** com o widget **Content-Tabs** tornam-se
+automaticamente **um** grupo. Para criar dois grupos separados:
 
 1. Criar uma **segunda secção** (recomendado) — nunca se agrupa
    além dos limites das secções.
-2. Nessa secção, organizar as colunas do segundo grupo como acima.
+2. Nessa secção, organizar as colunas do segundo grupo tal como descrito acima.
 
 Em alternativa, dentro da mesma secção:
 

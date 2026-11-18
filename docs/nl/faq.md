@@ -11,8 +11,8 @@ kan fungeren. Voeg een sectie toe, kies een kolomindeling en plaats de widget in
 rand — is dat een fout?
 
 Antwoord: Nee, dat is de bedoeling. In de editor blijven alle kolommen zichtbaar en
-kunnen ze afzonderlijk worden bewerkt; anders zou je geen toegang hebben tot de inhoud van de niet-actieve tabbladen
-. De tabbalk verschijnt in het voorbeeld en op de gepubliceerde
+kunnen ze afzonderlijk worden bewerkt; anders zou je geen toegang hebben tot de inhoud van de niet-actieve tabbladen.
+De tabbalk verschijnt in het voorbeeld en op de gepubliceerde
 pagina.
 
 **Vraag:** Waar voer ik de inhoud van een tabblad in?
@@ -21,21 +21,32 @@ Antwoord: Niet in de widget. De inhoud is alles wat **in dezelfde kolom**
 onder de Content-Tabs-widget staat — willekeurige teksten, afbeeldingen en andere
 widgets.
 
-**Vraag:** Ik heb maar één kolom met de widget. Waarom zie ik maar
-één tabblad?
+**Vraag:** In het venster „Tabblad een naam geven“ staat links in plaats van de tabbladen alleen een
+aanwijzing.
 
-Antwoord: Omdat elke gemarkeerde kolom een tabblad is, zelfs als er maar één is.
-Voor een echte tabbladbalk zijn minimaal twee kolommen nodig met elk een
+Antwoord: Het venster herkent het bewerkte tabblad aan de titel en aan
+de kolom waarop het laatst is geklikt. Als twee tabbladen dezelfde naam hebben – of
+als er nog helemaal geen naam is – en er niet eerder in de kolom is geklikt, is
+het onduidelijk welk tabblad wordt bedoeld. De titel wordt toch overgenomen. Wie eerst in
+de kolom van het tabblad klikt en vervolgens de instellingen opent, ziet de
+lijst. Als de opmerking luidt dat het blok in geen enkele kolom van een
+sectie staat, geldt de eerste vraag hierboven.
+
+**Vraag:** Ik heb slechts één kolom met de widget. Waarom zie ik maar één
+tabblad?
+
+Antwoord: Omdat elke gemarkeerde kolom een tabblad is, ook al is er maar één.
+Voor een echte tabbalk zijn minimaal twee kolommen nodig met elk een
 Content-Tabs-widget.
 
 **Vraag:** Twee tabbladgroepen zijn per ongeluk samengevoegd tot één.
 
 Antwoord: Alle direct naast elkaar gelegen kolommen met een Content-Tabs-widget vormen
-automatisch één groep. Plaats de tweede groep in een **eigen
+automatisch één gezamenlijke groep. Plaats de tweede groep in een **eigen
 sectie** — of laat er ten minste één kolom **zonder** widget tussen
 staan.
 
-**Vraag:** Ik heb twee 'Content-Tabs'-widgets in dezelfde kolom geplaatst en
+**Vraag:** Ik heb twee Content-Tabs-widgets in dezelfde kolom geplaatst en
 krijg toch maar één tabblad te zien.
 
 Antwoord: Klopt — per kolom telt precies één tabblad. Voor een tweede tabblad
@@ -56,7 +67,7 @@ in de eerste kolom.
 **Vraag:** Werkt dit ook met tabbladen binnen een tabblad?
 
 Antwoord: Nee. Er wordt alleen gekeken naar de kolommen van dezelfde sectie;
-secties binnen een tabbladkolom vormen geen nieuwe tabbladgroepen.
+secties binnen een tabbladkolom vormen geen afzonderlijke tabbladgroepen.
 
 **Vraag:** Kan de tabbalk met het toetsenbord worden bediend?
 

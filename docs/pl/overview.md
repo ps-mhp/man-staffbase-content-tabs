@@ -1,6 +1,6 @@
 # Zakładki treści
 
-Dzięki zakładkom treści można umieścić wiele treści jedna nad drugą, a nie jedna pod drugą:
+Dzięki zakładkom treści można umieścić kilka treści jedna nad drugą, a nie jedna pod drugą:
 na opublikowanej stronie pojawia się pasek zakładek, a czytelnicy
 mogą przełączać się między treściami jednym kliknięciem. Oszczędza to miejsce — na przykład na
 warianty produktów, lokalizacje, działy lub kilka bloków tematycznych, które w przeciwnym razie
@@ -12,15 +12,15 @@ tworzyłyby bardzo długą stronę.
 kolumn obok siebie, umieszczasz w każdej kolumnie widżet Content Tabs i
 wypełniasz kolumnę poniżej treścią, która ma się znaleźć w tej zakładce.
 
-Sam widżet niczego nie wyświetla. Stanowi jedynie oznaczenie „Ta kolumna
+Sam widżet niczego nie wyświetla. Jest to jedynie oznaczenie „Ta kolumna
 jest zakładką” i dostarcza odpowiedni napis.
 
 ## Co widzą czytelnicy
 
 Pasek zakładek nad treścią. Pierwsza zakładka jest zawsze
-aktywna po otwarciu strony. Kliknięcie na etykietę powoduje wyświetlenie treści odpowiedniej
+aktywna po otwarciu strony. Kliknięcie etykiety powoduje wyświetlenie treści odpowiedniej
 kolumny; pozostałe kolumny są ukryte. Na wąskich ekranach
-pasek pozostaje jednoliniowy i można go przesuwać w bok.
+pasek pozostaje jednowierszowy i można go przesuwać w bok.
 
 Wybór nie jest zapisywany: po ponownym załadowaniu strony ponownie
 aktywna jest pierwsza zakładka.

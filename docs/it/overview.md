@@ -9,7 +9,7 @@ creerebbero una pagina molto lunga.
 ## L’essenziale in una frase
 
 **Una scheda = una colonna.** In una sezione (Section) si creano più
-colonne una accanto all’altra, inserite in ogni colonna un widget «Content Tabs» e
+colonne una accanto all’altra, inserite in ciascuna colonna un widget «Content Tabs» e
 riempite la colonna sottostante con il contenuto che deve apparire in quella scheda.
 
 Il widget di per sé non visualizza nulla. Serve solo a indicare che «questa colonna
@@ -20,15 +20,15 @@ Il widget di per sé non visualizza nulla. Serve solo a indicare che «questa co
 Una barra delle schede sopra il contenuto. La prima scheda è sempre
 attiva all’apertura della pagina. Cliccando su un’etichetta viene visualizzato il contenuto della relativa
 colonna; le altre colonne sono nascoste. Sugli schermi stretti
-la barra rimane su una sola riga e può essere spostata lateralmente.
+la barra rimane su un’unica riga e può essere spostata lateralmente.
 
 La selezione non viene salvata: dopo aver ricaricato la pagina,
-la prima scheda è nuovamente attiva.
+la prima scheda torna ad essere attiva.
 
 ## Cosa vedete nell’editor CMS
 
 **Nessuna barra delle schede.** Durante la modifica, tutte le colonne rimangono affiancate
-in modo da poter accedere direttamente al contenuto di ciascuna scheda. Le colonne correlate
+in modo da poter modificare direttamente il contenuto di ogni scheda. Le colonne correlate
 sono contrassegnate solo da un bordo tratteggiato e da un’etichetta con il
 titolo della scheda. La barra delle schede vera e propria appare solo nell’anteprima
-e sulla pagina pubblicata.
+e nella pagina pubblicata.

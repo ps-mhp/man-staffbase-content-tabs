@@ -7,9 +7,10 @@
    The widget won’t work without columns—the columns are what
    will later become tabs.
 3. Drag the **Content Tabs** widget into the **left column**.
-4. In the widget settings, under **Tab Title**, enter a label,
-   such as `Announcements`, and save.
-5. Below the widget—**in the same column**—place the content that should appear in this
+4. Open the widget settings. In the **Name Tab** window, enter
+   a label for the **Tab Title**, e.g., `Announcements`,
+   select **Apply**, and save in Studio.
+5. Below the widget—**in the same column**—place the content you want to appear in this
    tab: text, images, other widgets, as many elements as you like.
 6. Repeat steps 3 through 5 for the **right column**, for example, with the title
    `Events`.
@@ -22,14 +23,15 @@ columns from left to right.
 ## Add Another Tab
 
 1. Add another **column** to the section.
-2. Drag a Content Tabs widget into it and give it a **tab title**.
+2. Drag a Content Tabs widget into it and, in the **Name Tab** window,
+   give it a **tab title**.
 3. Place the content below it in the same column.
 4. Save.
 
 There is no upper limit. If the labels no longer fit side by side,
 you can move the bar sideways.
 
-## Reordering Tabs
+## Rearrange Tabs
 
 1. In the editor, drag the relevant **column** to the desired position.
 2. Save—the tab order follows the column order from left to
@@ -49,7 +51,7 @@ automatically grouped into **one** group. To create two separate groups:
 
 1. Create a **second section** (recommended)—grouping never occurs
    across section boundaries.
-2. Set up the columns of the second group there as described above.
+2. Set up the columns for the second group there as described above.
 
 Alternatively, within the same section:
 

@@ -3,18 +3,19 @@
 ## Créer deux onglets
 
 1. Ouvrez la page dans le CMS pour la modifier.
-2. Insérez une **section** et choisissez une mise en page à **deux colonnes**
-  . Le widget ne fonctionne pas sans colonnes : ce sont elles
-  qui deviendront plus tard des onglets.
-3. Faites glisser le widget **Content-Tabs** dans la **colonne de gauche**.
-4. Dans les paramètres du widget, sous **Titre de l'onglet**, saisissez le libellé
-   souhaité, par exemple `Annonces`, puis enregistrez.
+2. Insérez une **section** et sélectionnez la mise en page **à deux colonnes**
+  . Le widget ne fonctionne pas sans colonnes — ce sont les colonnes qui
+   deviendront plus tard des onglets.
+3. Faites glisser le widget **Onglets de contenu** dans la **colonne de gauche**.
+4. Ouvrez les paramètres du widget. Dans la fenêtre **Nommer l’onglet**, saisissez
+   le **titre de l’onglet**, par exemple `Annonces`,
+   sélectionnez **Appliquer** et enregistrez dans Studio.
 5. Sous le widget — **dans la même colonne** — placez le contenu qui doit apparaître dans cet
    onglet : texte, images, autres widgets, autant d’éléments que vous le souhaitez.
 6. Répétez les étapes 3 à 5 pour la **colonne de droite**, par exemple avec le titre
-   `Événements`.
-7. Enregistrez la page et vérifiez-la dans l’**aperçu**. C’est seulement là qu’apparaîtra la
-   barre d’onglets avec les deux libellés.
+   « Événements ».
+7. Enregistrez la page et vérifiez-la dans l’**aperçu**. C’est seulement là que la
+   barre d’onglets avec les deux intitulés s’affiche.
 
 Résultat : deux onglets. L’ordre des onglets correspond à l’ordre des
 colonnes de gauche à droite.
@@ -22,22 +23,23 @@ colonnes de gauche à droite.
 ## Ajouter un onglet supplémentaire
 
 1. Ajoutez une **colonne** supplémentaire à la section.
-2. Faites glisser un widget « Content Tabs » dedans et attribuez-lui un **titre d’onglet**.
+2. Faites glisser un widget « Content Tabs » dans cette colonne et, dans la fenêtre **Nommer l’onglet**,
+   attribuez-lui un **titre d’onglet**.
 3. Placez le contenu en dessous, dans la même colonne.
 4. Enregistrez.
 
 Il n’y a pas de limite maximale. Si les libellés ne tiennent plus les uns à côté des autres,
-la barre peut être déplacée latéralement.
+vous pouvez faire glisser la barre latéralement.
 
 ## Réorganiser les onglets
 
-1. Dans l’éditeur, déplacez la **colonne** concernée vers la position souhaitée.
+1. Dans l’éditeur, déplacez la **colonne** concernée à l’emplacement souhaité.
 2. Enregistrez — l’ordre des onglets suit l’ordre des colonnes de gauche à
    droite.
 
 ## Supprimer un onglet
 
-1. Supprimez le **widget « Content Tabs »** de la colonne. La colonne n’est alors
+1. Supprimez le **widget « Onglets de contenu »** de la colonne. La colonne n’est alors
    plus un onglet, mais son contenu reste visible et s’affiche à nouveau normalement
    sur la page.
 2. Si vous souhaitez également que le contenu disparaisse, supprimez en plus la **colonne entière**.

@@ -8,18 +8,18 @@ resultariam numa página muito longa.
 
 ## O essencial numa frase
 
-**Uma aba = uma coluna.** Numa secção (Section), cria várias
+**Uma aba = uma coluna.** Numa secção (Section), crie várias
 colunas lado a lado, colocam um widget de separadores de conteúdo em cada coluna e
 preenchem a coluna abaixo com o conteúdo que deve constar nesse separador.
 
-O widget em si não mostra nada. É apenas a indicação de que «esta coluna
+O widget em si não exibe nada. É apenas a indicação de que «esta coluna
 é um separador» e fornece o título para o mesmo.
 
 ## O que os leitores veem
 
 Uma barra de separadores acima do conteúdo. O primeiro separador está sempre
-ativo ao abrir a página. Um clique num título mostra o conteúdo da respetiva
-coluna; as outras colunas ficam ocultas. Em ecrãs estreitos,
+ativo ao abrir a página. Um clique num título mostra o conteúdo da
+coluna correspondente; as outras colunas ficam ocultas. Em ecrãs estreitos,
 a barra permanece numa única linha e pode ser deslocada lateralmente.
 
 A seleção não é guardada: após recarregar a página,
@@ -29,6 +29,6 @@ a primeira aba volta a ficar ativa.
 
 **Sem barra de abas.** Durante a edição, todas as colunas permanecem lado a lado
 para que possa aceder diretamente ao conteúdo de cada separador. As colunas relacionadas
-são identificadas apenas por uma moldura tracejada e por um rótulo com o
+são identificadas apenas por uma moldura tracejada e um rótulo com o
 título do separador. A barra de separadores propriamente dita só aparece na pré-visualização
 e na página publicada.

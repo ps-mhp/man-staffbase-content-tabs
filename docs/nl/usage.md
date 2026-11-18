@@ -4,11 +4,12 @@
 
 1. Open de pagina in het CMS om deze te bewerken.
 2. Voeg een **sectie** (Section) toe en kies als lay-out **twee kolommen**
-  . Zonder kolommen werkt de widget niet — de kolommen zijn wat
-  later tabbladen worden.
+  . Zonder kolommen werkt de widget niet — de kolommen zijn
+   wat later tabbladen worden.
 3. Sleep de widget **Content-Tabs** naar de **linkerkolom**.
-4. Voer in de widgetinstellingen bij **Titel van het tabblad** de tekst
-   in, bijvoorbeeld `Aankondigingen`, en sla op.
+4. Open de widgetinstellingen. Voer in het venster **Tabblad een naam geven** bij
+   **Titel van het tabblad** de tekst in, bijvoorbeeld `Aankondigingen`,
+   kies **Toepassen** en sla het op in Studio.
 5. Plaats onder de widget — **in dezelfde kolom** — de inhoud die in dit
    tabblad moet verschijnen: tekst, afbeeldingen, andere widgets, zoveel elementen als je wilt.
 6. Herhaal stap 3 tot en met 5 voor de **rechterkolom**, bijvoorbeeld met de titel
@@ -22,7 +23,8 @@ kolommen van links naar rechts.
 ## Nog een tabblad toevoegen
 
 1. Voeg een extra **kolom** toe aan de sectie.
-2. Sleep een Content-Tabs-widget erin en geef het een **titel voor het tabblad**.
+2. Sleep een Content-Tabs-widget erin en geef deze in het venster **Tabblad benoemen**
+   een **titel voor het tabblad**.
 3. Plaats de inhoud eronder in dezelfde kolom.
 4. Opslaan.
 
