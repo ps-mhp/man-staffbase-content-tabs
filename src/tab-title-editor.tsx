@@ -42,8 +42,10 @@ export { TabTitleHelp } from "./tab-title-help";
 export interface TabTitleEditorProps {
   /** Der Titel im Entwurf, so wie getippt. */
   value: string;
+  /** Der zuletzt übernommene Titel; nach ihm wird der Tab gesucht. */
+  saved: string;
   onChange: (value: string) => void;
-  /** Wo der Tab steht; einmal beim Öffnen gefragt. Offengelegt für Tests. */
+  /** Wo der Tab steht; einmal beim Öffnen gefragt, mit `saved`. Offengelegt für Tests. */
   locate?: (title: string) => EditedTab;
 }
 
@@ -62,11 +64,13 @@ function Heading({ edited }: { edited: EditedTab }): React.ReactElement {
   );
 }
 
-export function TabTitleEditor({ value, onChange, locate = describeEditedTab }: TabTitleEditorProps): React.ReactElement {
-  // Einmal beim Öffnen, mit dem Titel von da: Die Seite hinter dem Dialog
-  // ändert sich nicht, solange er offen ist, und was jemand tippt, darf den
-  // Tab nicht einem anderen Block zuordnen, der zufällig so heißt.
-  const [edited] = React.useState(() => locate(value));
+export function TabTitleEditor({ value, saved, onChange, locate = describeEditedTab }: TabTitleEditorProps): React.ReactElement {
+  // Einmal beim Öffnen, mit dem übernommenen Titel: Die Seite hinter dem
+  // Dialog ändert sich nicht, solange er offen ist, und was jemand tippt,
+  // darf den Tab nicht einem anderen Block zuordnen, der zufällig so heißt.
+  // Beim Wiederöffnen trägt `value` schon den getippten Entwurf, die Seite
+  // aber noch den übernommenen Titel – darum `saved`.
+  const [edited] = React.useState(() => locate(saved));
   const entries = tabEntries(edited, value);
   const inputRef = React.useRef<HTMLInputElement>(null);
 

@@ -75,7 +75,7 @@ export function startTabTitleInjector(root: ParentNode = document): () => void {
     parse: parseTitleField,
     serialize: serializeTitle,
     shell: tabTitleShell,
-    render: ({ value, onChange }) =>
-      React.createElement(React.Suspense, { fallback: LOADING }, React.createElement(LazyTabTitleEditor, { value, onChange })),
+    render: ({ value, saved, onChange }) =>
+      React.createElement(React.Suspense, { fallback: LOADING }, React.createElement(LazyTabTitleEditor, { value, saved, onChange })),
   });
 }

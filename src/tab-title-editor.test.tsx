@@ -40,17 +40,20 @@ const SECTION: EditedTab = {
 
 interface HarnessProps {
   initial: string;
+  /** Der übernommene Titel; vorgegeben der Anfangsentwurf. */
+  saved?: string;
   edited: EditedTab;
   onChange?: (value: string) => void;
   locate?: jest.Mock;
 }
 
 /** Hält den Entwurf wie der Rahmen: der Editor ist gesteuert. */
-function Harness({ initial, edited, onChange, locate }: HarnessProps): React.ReactElement {
+function Harness({ initial, saved = initial, edited, onChange, locate }: HarnessProps): React.ReactElement {
   const [value, setValue] = React.useState(initial);
   return (
     <TabTitleEditor
       value={value}
+      saved={saved}
       onChange={(next) => {
         setValue(next);
         onChange?.(next);
@@ -147,6 +150,14 @@ describe("TabTitleEditor", () => {
 
     fireEvent.change(titleInput(), { target: { value: "Neu" } });
     fireEvent.change(titleInput(), { target: { value: "Neuer" } });
+
+    expect(locate).toHaveBeenCalledTimes(1);
+    expect(locate).toHaveBeenCalledWith("Termine");
+  });
+
+  it("sucht beim Wiederöffnen mit dem übernommenen Titel, nicht mit dem getippten Entwurf", () => {
+    const locate = jest.fn(() => SECTION);
+    render(<Harness initial="Termine (Entwurf)" saved="Termine" edited={SECTION} locate={locate} />);
 
     expect(locate).toHaveBeenCalledTimes(1);
     expect(locate).toHaveBeenCalledWith("Termine");
