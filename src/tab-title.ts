@@ -16,7 +16,7 @@
  * Fenster „Tab benennen“ ihn liest und zurückschreibt.
  *
  * Eigenes Modul, weil Block (`index.tsx`) und Fenster
- * (`tab-title-dialog.tsx`) beide davon abhängen – über `index.tsx` liefe
+ * (`tab-title-injector.ts`) beide davon abhängen – über `index.tsx` liefe
  * das im Kreis.
  */
 
